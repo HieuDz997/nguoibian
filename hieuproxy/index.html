@@ -745,9 +745,9 @@
         };
 
         const _net = {
-            v: 'http://36.50.134.20:3000/download/vn.txt',
-            p: 'http://36.50.134.20:3000/download/proxyspace_vn.txt',
-            g: 'http://36.50.134.20:3000/download/http.txt',
+            v: atob('aHR0cDovLzM2LjUwLjEzNC4yMDozMDAwL2Rvd25sb2FkL3ZuLnR4dA=='),
+            p: atob('aHR0cDovLzM2LjUwLjEzNC4yMDozMDAwL2Rvd25sb2FkL3Byb3h5c3BhY2Vfdm4udHh0'),
+            g: atob('aHR0cDovLzM2LjUwLjEzNC4yMDozMDAwL2Rvd25sb2FkL2h0dHAudHh0'),
             s1: 'https://api.proxyscrape.com/v2/?request=displayproxies&protocol=socks4&timeout=10000&country=all',
             s2: 'https://api.proxyscrape.com/v2/?request=displayproxies&protocol=socks5&timeout=10000&country=all',
             s3: 'https://cdn.jsdelivr.net/gh/proxifly/free-proxy-list@main/proxies/protocols/socks4/data.txt',
@@ -810,7 +810,7 @@
             console.log('Turnstile verified, token:', token);
             isTurnstileVerified = true;
             document.getElementById('continue-btn').disabled = false;
-            fetchProxyCounts();
+            fetchProxyCounts(); // Gọi ngay fetchProxyCounts sau khi CAPTCHA xác thực
         };
 
         function handleContinue() {
@@ -821,6 +821,7 @@
             console.log('Continue button clicked, hiding modal');
             document.getElementById('captcha-modal').classList.remove('show');
             document.getElementById('main-content').style.opacity = '1';
+            fetchProxyCounts(); // Gọi lại fetchProxyCounts để chắc chắn
             spamNetwork();
         }
 
@@ -946,8 +947,32 @@
             }
         }
 
+        async function fetchWithRetry(url, retries = 3, timeout = 5000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const controller = new AbortController();
+                    const id = setTimeout(() => controller.abort(), timeout);
+                    const response = await fetch(url, { 
+                        signal: controller.signal,
+                        mode: 'cors',
+                        cache: 'no-cache',
+                        headers: {
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                        }
+                    });
+                    clearTimeout(id);
+                    if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
+                    return await response.text();
+                } catch (error) {
+                    console.warn(`Fetch attempt ${i + 1} failed for ${url}:`, error);
+                    if (i === retries - 1) return '';
+                }
+            }
+        }
+
         async function fetchProxyCounts() {
             console.log('Starting fetchProxyCounts');
+            showStatus('loading', 'Fetching Proxies', 'Connecting to proxy servers...');
             spamNetwork();
             try {
                 const endpoints = {
@@ -958,19 +983,11 @@
 
                 // Fetch VN proxies
                 console.log('Fetching VN proxies from:', endpoints.vn);
-                const vnPromises = endpoints.vn.map(async (url, index) => {
-                    try {
-                        const response = await fetch(url, { mode: 'cors', cache: 'no-cache' });
-                        if (!response.ok) throw new Error(`VN endpoint ${index + 1} failed: ${response.status}`);
-                        const text = await response.text();
-                        console.log(`VN endpoint ${url} returned ${text.split('\n').length} lines`);
-                        return text.split('\n').filter(line => line.trim());
-                    } catch (error) {
-                        console.warn(`VN endpoint ${url} failed:`, error);
-                        return [];
-                    }
+                const vnPromises = endpoints.vn.map(async url => {
+                    const text = await fetchWithRetry(url);
+                    console.log(`VN endpoint ${url} returned ${text.split('\n').length} lines`);
+                    return text.split('\n').filter(line => line.trim());
                 });
-                
                 const vnResults = await Promise.all(vnPromises);
                 let vnProxies = [];
                 vnResults.forEach((result, index) => {
@@ -983,26 +1000,18 @@
                 // Fetch SOCKS proxies
                 console.log('Fetching SOCKS proxies from:', endpoints.socks);
                 const socksPromises = endpoints.socks.map(async (url, index) => {
-                    try {
-                        const response = await fetch(url, { mode: 'cors', cache: 'no-cache' });
-                        if (!response.ok) throw new Error(`SOCKS endpoint ${index + 1} failed: ${response.status}`);
-                        const text = await response.text();
-                        let proxies = [];
-                        if (index === 7) {
-                            proxies = parseGeonodeProxies(text);
-                        } else if (index === 9 || index === 10) {
-                            proxies = parseRoosterkidProxies(text);
-                        } else {
-                            proxies = text.split('\n').filter(line => line.trim());
-                        }
-                        console.log(`SOCKS endpoint ${url} returned ${proxies.length} proxies`);
-                        return proxies;
-                    } catch (error) {
-                        console.warn(`SOCKS endpoint ${url} failed:`, error);
-                        return [];
+                    const text = await fetchWithRetry(url);
+                    let proxies = [];
+                    if (index === 7) {
+                        proxies = parseGeonodeProxies(text);
+                    } else if (index === 9 || index === 10) {
+                        proxies = parseRoosterkidProxies(text);
+                    } else {
+                        proxies = text.split('\n').filter(line => line.trim());
                     }
+                    console.log(`SOCKS endpoint ${url} returned ${proxies.length} proxies`);
+                    return proxies;
                 });
-                
                 const socksResults = await Promise.all(socksPromises);
                 let socksProxies = [];
                 socksResults.forEach((proxies, index) => {
@@ -1015,26 +1024,18 @@
                 // Fetch ALL proxies
                 console.log('Fetching ALL proxies from:', endpoints.all);
                 const allPromises = endpoints.all.map(async (url, index) => {
-                    try {
-                        const response = await fetch(url, { mode: 'cors', cache: 'no-cache' });
-                        if (!response.ok) throw new Error(`ALL endpoint ${index + 1} failed: ${response.status}`);
-                        const text = await response.text();
-                        let proxies = [];
-                        if (url === _net.s8) {
-                            proxies = parseGeonodeProxies(text);
-                        } else if (url === _net.s10 || url === _net.s11) {
-                            proxies = parseRoosterkidProxies(text);
-                        } else {
-                            proxies = text.split('\n').filter(line => line.trim());
-                        }
-                        console.log(`ALL endpoint ${url} returned ${proxies.length} proxies`);
-                        return proxies;
-                    } catch (error) {
-                        console.warn(`ALL endpoint ${url} failed:`, error);
-                        return [];
+                    const text = await fetchWithRetry(url);
+                    let proxies = [];
+                    if (url === _net.s8) {
+                        proxies = parseGeonodeProxies(text);
+                    } else if (url === _net.s10 || url === _net.s11) {
+                        proxies = parseRoosterkidProxies(text);
+                    } else {
+                        proxies = text.split('\n').filter(line => line.trim());
                     }
+                    console.log(`ALL endpoint ${url} returned ${proxies.length} proxies`);
+                    return proxies;
                 });
-                
                 const allResults = await Promise.all(allPromises);
                 let allProxies = [];
                 allResults.forEach((proxies, index) => {
@@ -1048,13 +1049,14 @@
                 updateProxyCount('vn', proxyData.vn);
                 updateProxyCount('socks', proxyData.socks);
                 updateProxyCount('all', proxyData.all);
+                showStatus('success', 'Fetch Complete', 'Proxy counts updated successfully');
                 
             } catch (error) {
                 console.error('fetchProxyCounts error:', error);
                 updateProxyCount('vn', 'Error');
                 updateProxyCount('socks', 'Error');
                 updateProxyCount('all', 'Error');
-                showStatus('error', 'Fetch Failed', 'Failed to fetch proxy counts.');
+                showStatus('error', 'Fetch Failed', 'Failed to fetch proxy counts: ' + error.message);
             }
         }
 
@@ -1144,9 +1146,7 @@
                 for (let i = 0; i < endpoints.length; i++) {
                     showStatus('loading', 'Acquiring Proxies', `Accessing node ${i + 1}/${endpoints.length}...`);
                     try {
-                        const response = await fetch(endpoints[i], { mode: 'cors', cache: 'no-cache' });
-                        if (!response.ok) throw new Error(`Node ${i + 1} failed: ${response.status}`);
-                        const text = await response.text();
+                        const text = await fetchWithRetry(endpoints[i]);
                         let proxies = [];
                         if (endpoints[i] === _net.s8) {
                             proxies = parseGeonodeProxies(text);
