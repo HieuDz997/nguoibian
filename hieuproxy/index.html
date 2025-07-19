@@ -513,7 +513,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 23, 42, 0.7); /* Giảm độ mờ của overlay */
+            background: rgba(15, 23, 42, 0.7);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -872,6 +872,8 @@
             isTurnstileVerified = true;
             // Kích hoạt nút Continue
             document.getElementById('continue-btn').disabled = false;
+            // Gọi fetchProxyCounts ngay sau khi xác thực
+            fetchProxyCounts();
         };
 
         // Hàm xử lý khi nhấn nút Continue
@@ -880,8 +882,6 @@
             // Ẩn modal và hiển thị nội dung chính
             document.getElementById('captcha-modal').classList.remove('show');
             document.getElementById('main-content').style.opacity = '1';
-            // Bắt đầu lấy proxy counts
-            fetchProxyCounts();
             // Tiếp tục spam network
             spamNetwork();
         }
@@ -1023,10 +1023,9 @@
             }
         }
 
-        // Fetch proxy counts với spam protection mạnh
+        // Fetch proxy counts với logic từ bản cũ
         async function fetchProxyCounts() {
-            if (!isTurnstileVerified) return;
-            spamNetwork();
+            spamNetwork(); // Spam trước khi fetch
             
             try {
                 const endpoints = {
@@ -1035,6 +1034,7 @@
                     all: [_net.v, _net.p, _net.g, _net.s1, _net.s2, _net.s3, _net.s4, _net.s5, _net.s6, _net.s7, _net.s8, _net.s9, _net.s10, _net.s11, _net.s12, _net.s13]
                 };
 
+                // Fetch VN proxies
                 const vnPromises = endpoints.vn.map(url => 
                     fetch(url).then(r => r.text()).catch(() => '')
                 );
@@ -1049,14 +1049,15 @@
                 });
                 proxyData.vn = [...new Set(vnProxies)].length;
 
+                // Fetch SOCKS proxies
                 const socksPromises = endpoints.socks.map(async (url, index) => {
                     try {
                         const response = await fetch(url);
                         if (!response.ok) return [];
                         const text = await response.text();
-                        if (index === 7) {
+                        if (index === 7) { // Geonode API (s8)
                             return parseGeonodeProxies(text);
-                        } else if (index === 9 || index === 10) {
+                        } else if (index === 9 || index === 10) { // Roosterkid SOCKS5 (s10) và SOCKS4 (s11)
                             return parseRoosterkidProxies(text);
                         }
                         return text.split('\n').filter(line => line.trim());
@@ -1073,14 +1074,15 @@
                 });
                 proxyData.socks = [...new Set(socksProxies)].length;
 
+                // Fetch ALL proxies
                 const allPromises = endpoints.all.map(async (url, index) => {
                     try {
                         const response = await fetch(url);
                         if (!response.ok) return [];
                         const text = await response.text();
-                        if (url === _net.s8) {
+                        if (url === _net.s8) { // Geonode API
                             return parseGeonodeProxies(text);
-                        } else if (url === _net.s10 || url === _net.s11) {
+                        } else if (url === _net.s10 || url === _net.s11) { // Roosterkid SOCKS5 và SOCKS4
                             return parseRoosterkidProxies(text);
                         }
                         return text.split('\n').filter(line => line.trim());
@@ -1097,6 +1099,7 @@
                 });
                 proxyData.all = [...new Set(allProxies)].length;
 
+                // Update UI
                 updateProxyCount('vn', proxyData.vn);
                 updateProxyCount('socks', proxyData.socks);
                 updateProxyCount('all', proxyData.all);
@@ -1167,7 +1170,7 @@
         }
 
         async function downloadProxies() {
-            if (!selectedNetwork || isLoading || isReloading) return;
+            if (!selectedNetwork || isLoading || isReloading || !isTurnstileVerified) return;
             
             isLoading = true;
             const btn = document.getElementById('download-btn');
@@ -1256,7 +1259,7 @@
         }
 
         async function reloadProxyAlive() {
-            if (isLoading || isReloading) return;
+            if (isLoading || isReloading || !isTurnstileVerified) return;
             
             isReloading = true;
             const reloadBtn = document.getElementById('reload-btn');
@@ -1336,7 +1339,7 @@
             startSpamming();
             // Hiển thị nội dung chính trong 1 giây, sau đó hiện modal
             setTimeout(() => {
-                document.getElementById('main-content').style.opacity = '0.7'; // Giảm độ mờ
+                document.getElementById('main-content').style.opacity = '0.7';
                 document.getElementById('captcha-modal').classList.add('show');
                 // Cập nhật data-sitekey động
                 document.querySelector('.cf-turnstile').setAttribute('data-sitekey', _keys.siteKey);
