@@ -6,8 +6,8 @@
     <title>Proxy Nexus - Elite Network</title>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -15,27 +15,26 @@
         }
 
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #8b5cf6;
-            --accent: #06b6d4;
-            --success: #10b981;
+            --primary: #7c3aed;
+            --primary-dark: #6d28d9;
+            --secondary: #a855f7;
+            --accent: #3b82f6;
+            --success: #22c55e;
             --warning: #f59e0b;
             --error: #ef4444;
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-card: rgba(30, 41, 59, 0.4);
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --border: rgba(148, 163, 184, 0.1);
-            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --bg-primary: #0b0f1a;
+            --bg-secondary: #1c2526;
+            --bg-card: rgba(28, 37, 38, 0.5);
+            --text-primary: #f1f5f9;
+            --text-secondary: #d1d5db;
+            --border: rgba(209, 213, 219, 0.15);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --gradient-1: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+            --gradient-2: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
@@ -50,63 +49,14 @@
             width: 100%;
             height: 100%;
             background: 
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(120, 200, 255, 0.15) 0%, transparent 50%),
-                linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
-            z-index: -2;
-        }
-
-        .floating-orbs {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
+                radial-gradient(circle at 30% 70%, rgba(124, 58, 237, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 70% 30%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
+                linear-gradient(135deg, rgba(11, 15, 26, 0.95) 0%, rgba(28, 37, 38, 0.95) 100%);
             z-index: -1;
         }
 
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(40px);
-            animation: float 20s infinite ease-in-out;
-        }
-
-        .orb:nth-child(1) {
-            width: 300px;
-            height: 300px;
-            background: var(--gradient-1);
-            top: 20%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-
-        .orb:nth-child(2) {
-            width: 200px;
-            height: 200px;
-            background: var(--gradient-2);
-            top: 60%;
-            right: 20%;
-            animation-delay: 7s;
-        }
-
-        .orb:nth-child(3) {
-            width: 150px;
-            height: 150px;
-            background: var(--gradient-3);
-            bottom: 20%;
-            left: 30%;
-            animation-delay: 14s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(-30px) rotate(120deg); }
-            66% { transform: translateY(15px) rotate(240deg); }
-        }
-
         .container {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
             padding: 2rem;
             min-height: 100vh;
@@ -119,191 +69,131 @@
 
         .header {
             text-align: center;
-            margin-bottom: 3rem;
-            animation: fadeInUp 1s ease-out;
+            margin-bottom: 3.5rem;
+            animation: fadeIn 1.2s ease-out;
         }
 
         .logo {
-            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-size: clamp(2.5rem, 7vw, 3.5rem);
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            background: var(--gradient-1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
             position: relative;
-            animation: glow 3s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            from { filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.5)); }
-            to { filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.8)); }
         }
 
         .logo::after {
             content: '';
             position: absolute;
-            bottom: -15px;
+            bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 120px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            animation: pulse 2s infinite;
+            width: 100px;
+            height: 2px;
+            background: var(--gradient-2);
+            border-radius: 2px;
         }
 
         .tagline {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--text-secondary);
-            font-weight: 300;
+            font-weight: 400;
             letter-spacing: 0.5px;
-            opacity: 0.9;
+            opacity: 0.85;
         }
 
         .proxy-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
             width: 100%;
-            max-width: 1000px;
+            max-width: 1100px;
             margin-bottom: 3rem;
         }
 
         .proxy-card {
             background: var(--bg-card);
-            backdrop-filter: blur(25px);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 2rem;
+            border-radius: 16px;
+            padding: 1.5rem;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
             position: relative;
             overflow: hidden;
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        .proxy-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            z-index: -1;
-        }
-
-        .proxy-card:hover::before {
-            opacity: 0.1;
+            animation: slideIn 0.8s ease-out;
         }
 
         .proxy-card:hover {
-            transform: translateY(-10px) scale(1.02);
+            transform: translateY(-8px);
             box-shadow: var(--shadow);
             border-color: var(--primary);
         }
 
         .proxy-card.selected {
             border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
-            transform: translateY(-5px) scale(1.02);
-        }
-
-        .proxy-card.selected::before {
-            opacity: 0.15;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+            transform: translateY(-4px);
         }
 
         .card-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: var(--gradient-1);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card-icon::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transform: rotate(45deg);
-            transition: transform 0.6s ease;
-        }
-
-        .proxy-card:hover .card-icon::before {
-            transform: rotate(45deg) translateX(100%);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
         }
 
         .proxy-card:hover .card-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        .vietnam-flag {
-            display: inline-block;
-            font-size: 2rem;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            transform: scale(1.1);
         }
 
         .card-title {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: var(--text-primary);
         }
 
         .card-subtitle {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text-secondary);
             margin-bottom: 1rem;
-            opacity: 0.8;
+            opacity: 0.9;
         }
 
         .card-stats {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem;
+            padding: 0.8rem;
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            margin-bottom: 1rem;
-            backdrop-filter: blur(10px);
+            border-radius: 12px;
         }
 
         .stat-item {
             text-align: center;
+            flex: 1;
         }
 
         .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.3rem;
+            font-weight: 600;
             color: var(--accent);
-            display: block;
-            animation: countUp 2s ease-out;
         }
 
         .stat-label {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-top: 0.25rem;
-        }
-
-        @keyframes countUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            margin-top: 0.2rem;
         }
 
         .loading-skeleton {
@@ -314,9 +204,10 @@
             );
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
-            border-radius: 8px;
-            height: 24px;
-            width: 80px;
+            border-radius: 6px;
+            height: 20px;
+            width: 60px;
+            margin: 0 auto;
         }
 
         @keyframes shimmer {
@@ -326,7 +217,7 @@
 
         .download-section {
             text-align: center;
-            animation: fadeInUp 1s ease-out 0.3s both;
+            animation: fadeIn 1s ease-out 0.3s both;
         }
 
         .button-group {
@@ -337,85 +228,61 @@
         }
 
         .download-btn, .reload-btn {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: var(--gradient-1);
             border: none;
             color: white;
-            font-size: 1.1rem;
-            font-weight: 600;
-            padding: 1.2rem 3rem;
-            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.4s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
             overflow: hidden;
-            min-width: 220px;
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+            min-width: 200px;
         }
 
         .reload-btn {
-            background: linear-gradient(135deg, var(--warning), var(--accent));
-        }
-
-        .download-btn::before, .reload-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .download-btn:hover::before, .reload-btn:hover::before {
-            left: 100%;
+            background: var(--gradient-2);
         }
 
         .download-btn:hover, .reload-btn:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
-        }
-
-        .download-btn:active, .reload-btn:active {
-            transform: translateY(-1px) scale(1.02);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
         }
 
         .download-btn:disabled, .reload-btn:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
         }
 
         .status-panel {
             margin-top: 2rem;
             padding: 1.5rem;
-            border-radius: 20px;
+            border-radius: 16px;
             border: 1px solid var(--border);
             background: var(--bg-card);
-            backdrop-filter: blur(25px);
+            backdrop-filter: blur(20px);
             display: none;
-            min-width: 350px;
-            max-width: 500px;
+            max-width: 450px;
+            width: 100%;
         }
 
         .status-panel.show {
             display: block;
-            animation: slideUp 0.6s ease-out;
+            animation: slideIn 0.5s ease-out;
         }
 
         .status-panel.loading {
             border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
         }
 
         .status-panel.success {
             border-color: var(--success);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
         }
 
         .status-panel.error {
             border-color: var(--error);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
         }
 
         .status-content {
@@ -425,14 +292,13 @@
         }
 
         .status-icon {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
-            font-weight: bold;
+            font-size: 1.2rem;
         }
 
         .status-icon.loading {
@@ -454,45 +320,12 @@
 
         .status-title {
             font-weight: 600;
-            margin-bottom: 0.25rem;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         .status-desc {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-secondary);
-        }
-
-        .result-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .result-item {
-            text-align: center;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            transition: transform 0.3s ease;
-        }
-
-        .result-item:hover {
-            transform: translateY(-2px);
-        }
-
-        .result-value {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--accent);
-            display: block;
-        }
-
-        .result-label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-top: 0.25rem;
         }
 
         .modal-overlay {
@@ -501,14 +334,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 23, 42, 0.7);
+            background: rgba(11, 15, 26, 0.8);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
         }
 
         .modal-overlay.show {
@@ -518,25 +351,21 @@
 
         .modal-content {
             background: var(--bg-card);
-            backdrop-filter: blur(25px);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: 24px;
+            border-radius: 16px;
             padding: 2rem;
-            max-width: 400px;
+            max-width: 380px;
             width: 90%;
             text-align: center;
-            animation: slideUp 0.6s ease-out;
-            box-shadow: var(--shadow);
+            animation: slideIn 0.5s ease-out;
         }
 
         .modal-message {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--text-primary);
         }
 
         .modal-content .cf-turnstile {
@@ -544,60 +373,35 @@
         }
 
         .modal-content .continue-btn {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: var(--gradient-1);
             border: none;
             color: white;
-            font-size: 1.1rem;
-            font-weight: 600;
-            padding: 1rem 2rem;
-            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.8rem 2rem;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-            min-width: 150px;
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .modal-content .continue-btn:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
         }
 
         .modal-content .continue-btn:hover:not(:disabled) {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
         }
 
-        .modal-content .continue-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        .modal-content .continue-btn:hover::before {
-            left: 100%;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(40px); }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
         }
 
         @keyframes spin {
@@ -606,54 +410,43 @@
         }
 
         @media (max-width: 768px) {
-            .container { padding: 1rem; }
-            .proxy-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-            .proxy-card { padding: 1.5rem; }
-            .card-stats { flex-direction: column; gap: 1rem; }
-            .result-grid { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 1.5rem; }
+            .proxy-grid { grid-template-columns: 1fr; gap: 1rem; }
+            .proxy-card { padding: 1.2rem; }
+            .card-stats { flex-direction: column; gap: 0.8rem; }
             .button-group { flex-direction: column; align-items: center; }
-            .modal-message { font-size: 1.3rem; }
         }
 
         @media (max-width: 480px) {
             .logo { font-size: 2rem; }
-            .tagline { font-size: 1rem; }
-            .download-btn, .reload-btn { padding: 1rem 2rem; font-size: 1rem; min-width: 200px; }
+            .tagline { font-size: 0.95rem; }
+            .download-btn, .reload-btn { padding: 0.8rem 2rem; font-size: 0.9rem; min-width: 180px; }
             .modal-message { font-size: 1.1rem; }
-            .modal-content { padding: 1.5rem; width: 95%; }
+            .modal-content { padding: 1.2rem; width: 95%; }
         }
     </style>
 </head>
 <body>
     <div class="bg-gradient"></div>
-    <div class="floating-orbs">
-        <div class="orb"></div>
-        <div class="orb"></div>
-        <div class="orb"></div>
-    </div>
-    <canvas class="particles" id="particles"></canvas>
-    
-    <div class="modal-overlay" id="captcha-modal">
-        <div class="modal-content">
-            <div class="modal-message">Khoan đã!... Bro có phải human không? 💀</div>
-            <div class="cf-turnstile" data-sitekey="0x4AAAAAABlqkrhUw6a-Ljod" data-callback="onTurnstileSuccess"></div>
-            <button class="continue-btn" id="continue-btn" disabled>Continue</button>
-        </div>
-    </div>
-    
     <div class="container" id="main-content">
         <div class="header">
-            <div class="logo">Proxy Nexus Alive VIP</div>
-            <div class="tagline">Elite Network Infrastructure By Hiếu Dz</div>
+            <div class Prism.jsclass="logo">Proxy Nexus</div>
+            <div class="tagline">Elite Network Infrastructure by Hiếu Dz</div>
         </div>
-        
+
+        <div class="modal-overlay" id="captcha-modal">
+            <div class="modal-content">
+                <div class="modal-message">Xác minh bạn không phải robot! 🤖</div>
+                <div class="cf-turnstile" data-sitekey="0x4AAAAAABlqkrhUw6a-Ljod" data-callback="onTurnstileSuccess"></div>
+                <button class="continue-btn" id="continue-btn" disabled>Tiếp tục</button>
+            </div>
+        </div>
+
         <div class="proxy-grid">
             <div class="proxy-card" onclick="selectProxy('vn')" id="vn-card">
-                <div class="card-icon">
-                    <span class="vietnam-flag">🇻🇳</span>
-                </div>
-                <div class="card-title">🇻🇳 Proxy Việt Nam</div>
-                <div class="card-subtitle">High-speed Vietnamese proxies</div>
+                <div class="card-icon">🇻🇳</div>
+                <div class="card-title">Proxy Việt Nam</div>
+                <div class="card-subtitle">Proxies tốc độ cao tại Việt Nam</div>
                 <div class="card-stats">
                     <div class="stat-item">
                         <span class="stat-value" id="vn-count">
@@ -663,15 +456,15 @@
                     </div>
                     <div class="stat-item">
                         <span class="stat-value">⚡</span>
-                        <span class="stat-label">Speed</span>
+                        <span class="stat-label">Tốc độ</span>
                     </div>
                 </div>
             </div>
-            
+
             <div class="proxy-card" onclick="selectProxy('socks')" id="socks-card">
                 <div class="card-icon">🧦</div>
                 <div class="card-title">SOCKS Proxy VIP</div>
-                <div class="card-subtitle">SOCKS4/5 elite proxies vip</div>
+                <div class="card-subtitle">SOCKS4/5 proxies cao cấp</div>
                 <div class="card-stats">
                     <div class="stat-item">
                         <span class="stat-value" id="socks-count">
@@ -681,15 +474,15 @@
                     </div>
                     <div class="stat-item">
                         <span class="stat-value">🔒</span>
-                        <span class="stat-label">Secure</span>
+                        <span class="stat-label">Bảo mật</span>
                     </div>
                 </div>
             </div>
-            
+
             <div class="proxy-card" onclick="selectProxy('all')" id="all-card">
                 <div class="card-icon">🌍</div>
-                <div class="card-title">Global Network</div>
-                <div class="card-subtitle">Worldwide proxy infrastructure</div>
+                <div class="card-title">Mạng Toàn Cầu</div>
+                <div class="card-subtitle">Hạ tầng proxy toàn thế giới</div>
                 <div class="card-stats">
                     <div class="stat-item">
                         <span class="stat-value" id="all-count">
@@ -699,22 +492,22 @@
                     </div>
                     <div class="stat-item">
                         <span class="stat-value">🚀</span>
-                        <span class="stat-label">Global</span>
+                        <span class="stat-label">Toàn cầu</span>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <div class="download-section">
             <div class="button-group">
                 <button class="download-btn" onclick="downloadProxies()" id="download-btn" disabled>
-                    <span id="btn-text">Select Network</span>
+                    <span id="btn-text">Chọn Mạng</span>
                 </button>
                 <button class="reload-btn" onclick="reloadProxyAlive()" id="reload-btn">
-                    <span id="reload-btn-text">Reload Proxy Alive</span>
+                    <span id="reload-btn-text">Tải Lại Proxy</span>
                 </button>
             </div>
-            
+
             <div class="status-panel" id="status-panel">
                 <div class="status-content">
                     <div class="status-icon" id="status-icon"></div>
@@ -723,7 +516,6 @@
                         <div class="status-desc" id="status-desc"></div>
                     </div>
                 </div>
-                <div class="result-grid" id="result-grid" style="display: none;"></div>
             </div>
         </div>
     </div>
@@ -760,182 +552,18 @@
         let proxyData = { vn: 0, socks: 0, all: 0 };
         let isLoading = false;
         let isReloading = false;
-        let spamInterval;
         let isTurnstileVerified = false;
 
-        const decoyEndpoints = [
-            'https://httpbin.org/delay/1', 'https://api.github.com/users/github',
-            'https://jsonplaceholder.typicode.com/posts/1', 'https://httpbin.org/uuid',
-            'https://api.ipify.org?format=json', 'https://httpbin.org/status/200',
-            'https://api.github.com/zen', 'https://httpbin.org/headers',
-            'https://httpbin.org/user-agent', 'https://httpbin.org/ip',
-            'https://api.github.com/rate_limit', 'https://httpbin.org/anything',
-            'https://jsonplaceholder.typicode.com/users', 'https://httpbin.org/get',
-            'https://api.adviceslip.com/advice', 'https://httpbin.org/response-headers',
-            'https://jsonplaceholder.typicode.com/albums', 'https://httpbin.org/cookies',
-            'https://cat-fact.herokuapp.com/facts', 'https://httpbin.org/redirect/1'
-        ];
-
-        function spamNetwork() {
-            const randomEndpoints = decoyEndpoints.sort(() => Math.random() - 0.5).slice(0, 5);
-            randomEndpoints.forEach((url, index) => {
-                setTimeout(() => {
-                    fetch(url, { 
-                        mode: 'no-cors',
-                        cache: 'no-cache',
-                        credentials: 'omit',
-                        headers: {
-                            'User-Agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36`
-                        }
-                    }).catch(() => {});
-                }, index * (100 + Math.random() * 200));
-            });
-        }
-
-        function startSpamming() {
-            spamNetwork();
-            spamInterval = setInterval(spamNetwork, 2000 + Math.random() * 3000);
-        }
-
         window.onTurnstileSuccess = function(token) {
-            console.log('Turnstile verified, token:', token);
             isTurnstileVerified = true;
             document.getElementById('continue-btn').disabled = false;
-            fetchProxyCounts(); // Gọi ngay fetchProxyCounts sau khi CAPTCHA xác thực
         };
 
         function handleContinue() {
-            if (!isTurnstileVerified) {
-                console.log('Turnstile not verified yet');
-                return;
-            }
-            console.log('Continue button clicked, hiding modal');
+            if (!isTurnstileVerified) return;
             document.getElementById('captcha-modal').classList.remove('show');
             document.getElementById('main-content').style.opacity = '1';
-            fetchProxyCounts(); // Gọi lại fetchProxyCounts để chắc chắn
-            spamNetwork();
-        }
-
-        function blockDevToolsAndSave(event) {
-            if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && event.key === 'I') || (event.ctrlKey && event.key === 'S')) {
-                event.preventDefault();
-                console.log('%c🚫 Action disabled', 'color: #ef4444; font-size: 16px; font-weight: bold;');
-                return false;
-            }
-        }
-
-        document.addEventListener('keydown', blockDevToolsAndSave);
-
-        const canvas = document.getElementById('particles');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const particles = [];
-        const particleCount = 60;
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.8;
-                this.vy = (Math.random() - 0.5) * 0.8;
-                this.life = Math.random() * 100;
-                this.maxLife = 100;
-                this.size = Math.random() * 2 + 1;
-                this.color = `hsl(${Math.random() * 60 + 220}, 70%, 60%)`;
-            }
-
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.life--;
-
-                if (this.life <= 0) {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.life = this.maxLife;
-                }
-
-                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-            }
-
-            draw() {
-                const opacity = this.life / this.maxLife;
-                ctx.save();
-                ctx.globalAlpha = opacity * 0.4;
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
-            particles.forEach((particle, i) => {
-                particles.slice(i + 1).forEach(otherParticle => {
-                    const dx = particle.x - otherParticle.x;
-                    const dy = particle.y - otherParticle.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < 120) {
-                        ctx.save();
-                        ctx.globalAlpha = (1 - distance / 120) * 0.15;
-                        ctx.strokeStyle = '#6366f1';
-                        ctx.lineWidth = 0.5;
-                        ctx.beginPath();
-                        ctx.moveTo(particle.x, particle.y);
-                        ctx.lineTo(otherParticle.x, otherParticle.y);
-                        ctx.stroke();
-                        ctx.restore();
-                    }
-                });
-            });
-            requestAnimationFrame(animateParticles);
-        }
-
-        animateParticles();
-
-        function parseGeonodeProxies(jsonData) {
-            try {
-                const data = JSON.parse(jsonData);
-                console.log('Geonode data:', data);
-                if (!data.data || !Array.isArray(data.data)) return [];
-                return data.data
-                    .filter(proxy => proxy.protocols.includes('socks4') || proxy.protocols.includes('socks5'))
-                    .map(proxy => `${proxy.ip}:${proxy.port}`);
-            } catch (error) {
-                console.warn('Error parsing Geonode JSON:', error);
-                return [];
-            }
-        }
-
-        function parseRoosterkidProxies(text) {
-            try {
-                const lines = text.split('\n');
-                const proxyRegex = /^\S*\s*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5})/;
-                const proxies = lines
-                    .map(line => {
-                        const match = line.match(proxyRegex);
-                        return match ? match[1] : null;
-                    })
-                    .filter(line => line && line.includes(':'));
-                console.log('Roosterkid proxies:', proxies);
-                return proxies;
-            } catch (error) {
-                console.warn('Error parsing Roosterkid data:', error);
-                return [];
-            }
+            fetchProxyCounts();
         }
 
         async function fetchWithRetry(url, retries = 3, timeout = 10000) {
@@ -943,7 +571,6 @@
             const fetchUrl = isHttp ? `${CORS_PROXY}${url}` : url;
             for (let i = 0; i < retries; i++) {
                 try {
-                    console.log(`Fetching ${fetchUrl} (Attempt ${i + 1}/${retries})`);
                     const controller = new AbortController();
                     const id = setTimeout(() => controller.abort(), timeout);
                     const response = await fetch(fetchUrl, { 
@@ -957,20 +584,15 @@
                     });
                     clearTimeout(id);
                     if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
-                    const text = await response.text();
-                    console.log(`Fetch ${fetchUrl} succeeded, returned ${text.split('\n').length} lines`);
-                    return text;
+                    return await response.text();
                 } catch (error) {
-                    console.warn(`Fetch attempt ${i + 1} failed for ${fetchUrl}:`, error);
                     if (i === retries - 1) return '';
                 }
             }
         }
 
         async function fetchProxyCounts() {
-            console.log('Starting fetchProxyCounts');
-            showStatus('loading', 'Fetching Proxies', 'Connecting to proxy servers...');
-            spamNetwork();
+            showStatus('loading', 'Đang Tải Proxies', 'Kết nối đến máy chủ proxy...');
             try {
                 const endpoints = {
                     vn: [_net.v, _net.p],
@@ -978,201 +600,135 @@
                     all: [_net.v, _net.p, _net.g, _net.s1, _net.s2, _net.s3, _net.s4, _net.s5, _net.s6, _net.s7, _net.s8, _net.s9, _net.s10, _net.s11, _net.s12, _net.s13]
                 };
 
-                // Fetch VN proxies
-                console.log('Fetching VN proxies from:', endpoints.vn);
-                const vnPromises = endpoints.vn.map(async url => {
+                const vnResults = await Promise.all(endpoints.vn.map(url => fetchWithRetry(url)));
+                proxyData.vn = [...new Set(vnResults.flatMap(result => result.split('\n').filter(line => line.trim())))].length;
+
+                const socksResults = await Promise.all(endpoints.socks.map(async (url, index) => {
                     const text = await fetchWithRetry(url);
+                    if (index === 7) return parseGeonodeProxies(text);
+                    if (index === 9 || index === 10) return parseRoosterkidProxies(text);
                     return text.split('\n').filter(line => line.trim());
-                });
-                const vnResults = await Promise.all(vnPromises);
-                let vnProxies = [];
-                vnResults.forEach((result, index) => {
-                    console.log(`VN endpoint ${_net.v[index]} result: ${result.length} proxies`);
-                    vnProxies = vnProxies.concat(result);
-                });
-                proxyData.vn = [...new Set(vnProxies)].length;
-                console.log('VN proxies count:', proxyData.vn);
+                }));
+                proxyData.socks = [...new Set(socksResults.flat())].length;
 
-                // Fetch SOCKS proxies
-                console.log('Fetching SOCKS proxies from:', endpoints.socks);
-                const socksPromises = endpoints.socks.map(async (url, index) => {
+                const allResults = await Promise.all(endpoints.all.map(async (url, index) => {
                     const text = await fetchWithRetry(url);
-                    let proxies = [];
-                    if (index === 7) {
-                        proxies = parseGeonodeProxies(text);
-                    } else if (index === 9 || index === 10) {
-                        proxies = parseRoosterkidProxies(text);
-                    } else {
-                        proxies = text.split('\n').filter(line => line.trim());
-                    }
-                    console.log(`SOCKS endpoint ${url} returned ${proxies.length} proxies`);
-                    return proxies;
-                });
-                const socksResults = await Promise.all(socksPromises);
-                let socksProxies = [];
-                socksResults.forEach((proxies, index) => {
-                    console.log(`SOCKS endpoint ${index + 1} result: ${proxies.length} proxies`);
-                    socksProxies = socksProxies.concat(proxies);
-                });
-                proxyData.socks = [...new Set(socksProxies)].length;
-                console.log('SOCKS proxies count:', proxyData.socks);
+                    if (url === _net.s8) return parseGeonodeProxies(text);
+                    if (url === _net.s10 || url === _net.s11) return parseRoosterkidProxies(text);
+                    return text.split('\n').filter(line => line.trim());
+                }));
+                proxyData.all = [...new Set(allResults.flat())].length;
 
-                // Fetch ALL proxies
-                console.log('Fetching ALL proxies from:', endpoints.all);
-                const allPromises = endpoints.all.map(async (url, index) => {
-                    const text = await fetchWithRetry(url);
-                    let proxies = [];
-                    if (url === _net.s8) {
-                        proxies = parseGeonodeProxies(text);
-                    } else if (url === _net.s10 || url === _net.s11) {
-                        proxies = parseRoosterkidProxies(text);
-                    } else {
-                        proxies = text.split('\n').filter(line => line.trim());
-                    }
-                    console.log(`ALL endpoint ${url} returned ${proxies.length} proxies`);
-                    return proxies;
-                });
-                const allResults = await Promise.all(allPromises);
-                let allProxies = [];
-                allResults.forEach((proxies, index) => {
-                    console.log(`ALL endpoint ${index + 1} result: ${proxies.length} proxies`);
-                    allProxies = allProxies.concat(proxies);
-                });
-                proxyData.all = [...new Set(allProxies)].length;
-                console.log('ALL proxies count:', proxyData.all);
-
-                // Update UI
                 updateProxyCount('vn', proxyData.vn);
                 updateProxyCount('socks', proxyData.socks);
                 updateProxyCount('all', proxyData.all);
-                showStatus('success', 'Fetch Complete', 'Proxy counts updated successfully');
-                
+                showStatus('success', 'Tải Thành Công', 'Danh sách proxy đã được cập nhật');
             } catch (error) {
-                console.error('fetchProxyCounts error:', error);
-                updateProxyCount('vn', 'Error');
-                updateProxyCount('socks', proxyData.socks || 'Error');
-                updateProxyCount('all', proxyData.all || 'Error');
-                showStatus('error', 'Fetch Failed', 'Failed to fetch proxy counts: ' + error.message);
+                updateProxyCount('vn', 'Lỗi');
+                updateProxyCount('socks', 'Lỗi');
+                updateProxyCount('all', 'Lỗi');
+                showStatus('error', 'Tải Thất Bại', 'Không thể tải danh sách proxy: ' + error.message);
+            }
+        }
+
+        function parseGeonodeProxies(jsonData) {
+            try {
+                const data = JSON.parse(jsonData);
+                if (!data.data || !Array.isArray(data.data)) return [];
+                return data.data
+                    .filter(proxy => proxy.protocols.includes('socks4') || proxy.protocols.includes('socks5'))
+                    .map(proxy => `${proxy.ip}:${proxy.port}`);
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function parseRoosterkidProxies(text) {
+            try {
+                const lines = text.split('\n');
+                const proxyRegex = /^\S*\s*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5})/;
+                return lines
+                    .map(line => {
+                        const match = line.match(proxyRegex);
+                        return match ? match[1] : null;
+                    })
+                    .filter(line => line && line.includes(':'));
+            } catch (error) {
+                return [];
             }
         }
 
         function updateProxyCount(type, count) {
             const element = document.getElementById(`${type}-count`);
             element.innerHTML = typeof count === 'number' ? count.toLocaleString() : count;
-            console.log(`Updated ${type} count:`, count);
         }
 
         function selectProxy(network) {
             if (isLoading || isReloading) return;
-            
             selectedNetwork = network;
-            console.log('Selected network:', network);
-            
-            document.querySelectorAll('.proxy-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            
+            document.querySelectorAll('.proxy-card').forEach(card => card.classList.remove('selected'));
             document.getElementById(`${network}-card`).classList.add('selected');
-            
             const btn = document.getElementById('download-btn');
             const btnText = document.getElementById('btn-text');
             btn.disabled = false;
-            btnText.textContent = `Download ${network === 'vn' ? '🇻🇳' : network === 'socks' ? 'SOCKS' : 'Global'} Proxies`;
+            btnText.textContent = `Tải ${network === 'vn' ? '🇻🇳 VN' : network === 'socks' ? 'SOCKS' : 'Toàn Cầu'} Proxies`;
         }
 
-        function showStatus(type, title, desc, results = null) {
+        function showStatus(type, title, desc) {
             const panel = document.getElementById('status-panel');
             const icon = document.getElementById('status-icon');
             const titleEl = document.getElementById('status-title');
             const descEl = document.getElementById('status-desc');
-            const resultGrid = document.getElementById('result-grid');
-            
             panel.className = `status-panel show ${type}`;
             icon.className = `status-icon ${type}`;
             titleEl.textContent = title;
             descEl.textContent = desc;
-            
-            if (type === 'loading') {
-                icon.textContent = '⟳';
-            } else if (type === 'success') {
-                icon.textContent = '✓';
-            } else if (type === 'error') {
-                icon.textContent = '✗';
-            }
-            
-            if (results) {
-                resultGrid.innerHTML = Object.entries(results).map(([key, value]) => 
-                    `<div class="result-item">
-                        <span class="result-value">${value}</span>
-                        <span class="result-label">${key}</span>
-                    </div>`
-                ).join('');
-                resultGrid.style.display = 'grid';
-            } else {
-                resultGrid.style.display = 'none';
-            }
-            console.log(`Status shown: ${type} - ${title} - ${desc}`);
+            icon.textContent = type === 'loading' ? '⟳' : type === 'success' ? '✓' : '✗';
         }
 
         async function downloadProxies() {
-            if (!selectedNetwork || isLoading || isReloading || !isTurnstileVerified) {
-                console.log('Download blocked:', { selectedNetwork, isLoading, isReloading, isTurnstileVerified });
-                return;
-            }
-            
+            if (!selectedNetwork || isLoading || isReloading || !isTurnstileVerified) return;
             isLoading = true;
             const btn = document.getElementById('download-btn');
             const btnText = document.getElementById('btn-text');
             btn.disabled = true;
-            btnText.textContent = 'Processing...';
-            
-            showStatus('loading', 'Acquiring Proxies', 'Connecting to network nodes...');
-            spamNetwork();
-            
+            btnText.textContent = 'Đang Xử Lý...';
+            showStatus('loading', 'Đang Tải Proxies', 'Kết nối đến các node mạng...');
+
             try {
                 const endpoints = {
                     vn: [_net.v, _net.p],
                     socks: [_net.s1, _net.s2, _net.s3, _net.s4, _net.s5, _net.s6, _net.s7, _net.s8, _net.s9, _net.s10, _net.s11, _net.s12, _net.s13],
                     all: [_net.v, _net.p, _net.g, _net.s1, _net.s2, _net.s3, _net.s4, _net.s5, _net.s6, _net.s7, _net.s8, _net.s9, _net.s10, _net.s11, _net.s12, _net.s13]
                 }[selectedNetwork];
-                
+
                 let allProxies = [];
-                let successCount = 0;
-                
                 for (let i = 0; i < endpoints.length; i++) {
-                    showStatus('loading', 'Acquiring Proxies', `Accessing node ${i + 1}/${endpoints.length}...`);
-                    try {
-                        const text = await fetchWithRetry(endpoints[i]);
-                        let proxies = [];
-                        if (endpoints[i] === _net.s8) {
-                            proxies = parseGeonodeProxies(text);
-                        } else if (endpoints[i] === _net.s10 || endpoints[i] === _net.s11) {
-                            proxies = parseRoosterkidProxies(text);
-                        } else {
-                            proxies = text.split('\n').filter(line => line.trim());
-                        }
-                        console.log(`Download node ${endpoints[i]} returned ${proxies.length} proxies`);
-                        allProxies = allProxies.concat(proxies);
-                        successCount++;
-                    } catch (error) {
-                        console.warn(`Download node ${endpoints[i]} failed:`, error);
+                    showStatus('loading', 'Đang Tải Proxies', `Truy cập node ${i + 1}/${endpoints.length}...`);
+                    const text = await fetchWithRetry(endpoints[i]);
+                    let proxies = [];
+                    if (endpoints[i] === _net.s8) {
+                        proxies = parseGeonodeProxies(text);
+                    } else if (endpoints[i] === _net.s10 || endpoints[i] === _net.s11) {
+                        proxies = parseRoosterkidProxies(text);
+                    } else {
+                        proxies = text.split('\n').filter(line => line.trim());
                     }
+                    allProxies = allProxies.concat(proxies);
                 }
-                
+
                 const uniqueProxies = [...new Set(allProxies)];
                 const finalCount = uniqueProxies.length;
-                
-                if (finalCount === 0) {
-                    throw new Error('No proxies available');
-                }
-                
+
+                if (finalCount === 0) throw new Error('Không có proxy nào khả dụng');
+
                 const fileContent = uniqueProxies.join('\n');
                 const fileName = {
                     vn: 'vnprxhieudz.txt',
                     socks: 'socks_hieudz.txt',
                     all: 'all_hieudz.txt'
                 }[selectedNetwork];
-                
+
                 const blob = new Blob([fileContent], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -1182,113 +738,60 @@
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-                
-                showStatus('success', 'Download Complete', 'Proxies have been successfully acquired', {
-                    'Total': finalCount.toLocaleString(),
-                    'Network': selectedNetwork.toUpperCase(),
-                    'File': fileName,
-                    'Status': 'Ready'
-                });
-                
+
+                showStatus('success', 'Tải Thành Công', 'Đã tải xuống danh sách proxy thành công');
             } catch (error) {
-                console.error('Download error:', error);
-                showStatus('error', 'Download Failed', error.message);
+                showStatus('error', 'Tải Thất Bại', error.message);
             } finally {
                 isLoading = false;
                 btn.disabled = false;
                 btnText.textContent = selectedNetwork ? 
-                    `Download ${selectedNetwork === 'vn' ? '🇻🇳' : selectedNetwork === 'socks' ? 'SOCKS' : 'Global'} Proxies` : 
-                    'Select Network';
+                    `Tải ${selectedNetwork === 'vn' ? '🇻🇳 VN' : selectedNetwork === 'socks' ? 'SOCKS' : 'Toàn Cầu'} Proxies` : 
+                    'Chọn Mạng';
             }
         }
 
         async function reloadProxyAlive() {
-            if (isLoading || isReloading || !isTurnstileVerified) {
-                console.log('Reload blocked:', { isLoading, isReloading, isTurnstileVerified });
-                return;
-            }
-            
+            if (isLoading || isReloading || !isTurnstileVerified) return;
             isReloading = true;
             const reloadBtn = document.getElementById('reload-btn');
             const reloadBtnText = document.getElementById('reload-btn-text');
             reloadBtn.disabled = true;
-            reloadBtnText.textContent = 'Reloading...';
-            
-            showStatus('loading', 'Reloading Proxies', 'Please wait at least 20s to update proxy list...');
-            spamNetwork();
-            
+            reloadBtnText.textContent = 'Đang Tải Lại...';
+            showStatus('loading', 'Đang Tải Lại Proxies', 'Vui lòng đợi khoảng 20 giây...');
+
             try {
                 const headers = {
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-                    'Accept-Encoding': 'gzip, deflate',
-                    'Accept-Language': 'vi,en;q=0.9,vi-VN;q=0.8,fr-FR;q=0.7,fr;q=0.6,en-US;q=0.5',
-                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
-                    'Referer': 'http://36.50.134.20:3000/',
-                    'Upgrade-Insecure-Requests': '1',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                     'X-Requested-With': 'XMLHttpRequest'
                 };
-                
-                const proxiesResponse = await fetchWithRetry(_net.r1, { method: 'GET', headers });
-                const updateResponse = await fetchWithRetry(_net.r2, {
-                    method: 'GET',
-                    headers: { ...headers, 'If-None-Match': 'W/"99-1x+XEw8jHguDR7j41HBnjnuZZGM"' }
-                });
-                
-                if (!proxiesResponse || !updateResponse) {
-                    throw new Error('One or more requests failed');
-                }
-                
+
+                await Promise.all([
+                    fetchWithRetry(_net.r1, { method: 'GET', headers }),
+                    fetchWithRetry(_net.r2, { method: 'GET', headers })
+                ]);
+
                 const delay = Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000;
-                showStatus('loading', 'Reloading Proxies', `Waiting ${Math.round(delay/1000)} seconds before reload...`);
+                showStatus('loading', 'Đang Tải Lại Proxies', `Đợi ${Math.round(delay/1000)} giây trước khi tải lại...`);
                 await new Promise(resolve => setTimeout(resolve, delay));
-                
-                showStatus('success', 'Reload Complete', 'Page is reloading with updated proxies...');
+
+                showStatus('success', 'Tải Lại Thành Công', 'Trang đang được làm mới...');
                 window.location.reload();
-                
             } catch (error) {
-                console.error('Reload error:', error);
-                showStatus('error', 'Reload Failed', error.message);
+                showStatus('error', 'Tải Lại Thất Bại', error.message);
                 isReloading = false;
                 reloadBtn.disabled = false;
-                reloadBtnText.textContent = 'Reload Proxy Alive';
+                reloadBtnText.textContent = 'Tải Lại Proxy';
             }
         }
 
-        let devtools = false;
-        setInterval(() => {
-            if (window.outerHeight - window.innerHeight > 200 || window.outerWidth - window.innerWidth > 200) {
-                if (!devtools) {
-                    devtools = true;
-                    console.clear();
-                    console.log('%c🚫 Unauthorized Access Detected', 'color: #ef4444; font-size: 20px; font-weight: bold;');
-                    spamNetwork();
-                }
-            } else {
-                devtools = false;
-            }
-        }, 500);
-
         window.addEventListener('load', () => {
-            console.log('Page loaded, starting initialization');
-            startSpamming();
             setTimeout(() => {
                 document.getElementById('main-content').style.opacity = '0.7';
                 document.getElementById('captcha-modal').classList.add('show');
                 document.querySelector('.cf-turnstile').setAttribute('data-sitekey', _keys.siteKey);
             }, 1000);
-        });
-
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && isTurnstileVerified) {
-                console.log('Tab visible, fetching proxy counts');
-                fetchProxyCounts();
-                spamNetwork();
-            }
-        });
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
         });
 
         document.getElementById('continue-btn').addEventListener('click', handleContinue);
