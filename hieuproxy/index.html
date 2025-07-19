@@ -411,7 +411,7 @@
 
         @media (max-width: 768px) {
             .container { padding: 1.5rem; }
-            .proxy-grid { grid-template-columns: 1fr; gap: 1rem; }
+/*             .proxy-grid { grid-template-columns: 1fr; gap: 1rem; } */
             .proxy-card { padding: 1.2rem; }
             .card-stats { flex-direction: column; gap: 0.8rem; }
             .button-group { flex-direction: column; align-items: center; }
@@ -474,7 +474,7 @@
                     </div>
                     <div class="stat-item">
                         <span class="stat-value">🔒</span>
-                        <span class="stat-label">Bảo mật</span>
+                        <span class="stat-label">B08 mật</span>
                     </div>
                 </div>
             </div>
@@ -537,6 +537,47 @@
             }
         });
 
+        // Spam network requests to obfuscate real proxy API calls
+        function startNetworkSpam() {
+            const fakeEndpoints = [
+                'https://api.github.com/repos/random/repo',
+                'https://jsonplaceholder.typicode.com/posts',
+                'https://randomuser.me/api/',
+                'https://dog.ceo/api/breeds/image/random',
+                'https://api.chucknorris.io/jokes/random',
+                'https://api.quotable.io/random',
+                'https://swapi.dev/api/people/1/',
+                'https://catfact.ninja/fact',
+                'https://api.openweathermap.org/data/2.5/weather?q=London&appid=dummy',
+                'https://api.coindesk.com/v1/bpi/currentprice.json'
+            ];
+
+            function sendFakeRequest() {
+                const randomUrl = fakeEndpoints[Math.floor(Math.random() * fakeEndpoints.length)];
+                fetch(randomUrl, {
+                    method: ['GET', 'POST', 'HEAD'][Math.floor(Math.random() * 3)],
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                        'X-Fake-Request': `dummy-${Math.random().toString(36).substring(2, 15)}`
+                    },
+                    mode: 'cors',
+                    cache: 'no-cache'
+                }).catch(() => {}); // Ignore errors to avoid console clutter
+            }
+
+            // Send fake requests at random intervals (3-10 seconds)
+            function scheduleNextRequest() {
+                const delay = Math.floor(Math.random() * (10000 - 3000 + 1)) + 3000;
+                setTimeout(() => {
+                    sendFakeRequest();
+                    scheduleNextRequest();
+                }, delay);
+            }
+
+            // Start the spam after a short delay
+            setTimeout(scheduleNextRequest, 2000);
+        }
+
         const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
         const _keys = {
             siteKey: atob('MHg0QUFBQUFBQmxxa3JoVXc2YS1Mam9k'),
@@ -580,6 +621,7 @@
             document.getElementById('captcha-modal').classList.remove('show');
             document.getElementById('main-content').style.opacity = '1';
             fetchProxyCounts();
+            startNetworkSpam(); // Start network spam after CAPTCHA verification
         }
 
         async function fetchWithRetry(url, retries = 3, timeout = 10000) {
