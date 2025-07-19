@@ -118,7 +118,7 @@
             backdrop-filter: blur(20px);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 4rem;
+            padding: 1.5rem;
             cursor: pointer;
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
             position: relative;
@@ -521,6 +521,22 @@
     </div>
 
     <script>
+        // Anti-right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Anti-DevTools shortcuts (F12, Ctrl+Shift+I, Ctrl+S)
+        document.addEventListener('keydown', function(e) {
+            if (
+                e.key === 'F12' ||
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.key === 's')
+            ) {
+                e.preventDefault();
+            }
+        });
+
         const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
         const _keys = {
             siteKey: atob('MHg0QUFBQUFBQmxxa3JoVXc2YS1Mam9k'),
@@ -554,119 +570,6 @@
         let isReloading = false;
         let isTurnstileVerified = false;
 
-        // Expanded list of decoy endpoints for aggressive network spam
-        const decoyEndpoints = [
-            'https://httpbin.org/delay/1', 'https://api.github.com/users/github',
-            'https://jsonplaceholder.typicode.com/posts/1', 'https://httpbin.org/uuid',
-            'https://api.ipify.org?format=json', 'https://httpbin.org/status/200',
-            'https://api.github.com/zen', 'https://httpbin.org/headers',
-            'https://httpbin.org/user-agent', 'https://httpbin.org/ip',
-            'https://api.github.com/rate_limit', 'https://httpbin.org/anything',
-            'https://jsonplaceholder.typicode Royaume, 'https://httpbin.org/get',
-            'https://api.adviceslip.com/advice', 'https://httpbin.org/response-headers',
-            'https://jsonplaceholder.typicode.com/albums', 'https://httpbin.org/cookies',
-            'https://cat-fact.herokuapp.com/facts', 'https://httpbin.org/redirect/1',
-            'https://api.publicapis.org/entries', 'https://httpbin.org/status/404',
-            'https://randomuser.me/api/', 'https://httpbin.org/delay/2',
-            'https://api.coindesk.com/v1/bpi/currentprice.json', 'https://httpbin.org/base64/1024',
-            'https://api.openweathermap.org/data/2.5/weather?q=London',
-            'https://httpbin.org/xml', 'https://api.chucknorris.io/jokes/random',
-            'https://httpbin.org/bytes/1024', 'https://api.quotable.io/random'
-        ];
-
-        // Aggressive network spam function
-        function spamNetwork() {
-            const randomEndpoints = decoyEndpoints.sort(() => Math.random() - 0.5).slice(0, 10);
-            randomEndpoints.forEach((url, index) => {
-                setTimeout(() => {
-                    fetch(url, { 
-                        mode: 'no-cors',
-                        cache: 'no-cache',
-                        credentials: 'omit',
-                        headers: {
-                            'User-Agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36`,
-                            'X-Random-Header': Math.random().toString(36).substring(2, 15),
-                            'X-Timestamp': Date.now().toString()
-                        }
-                    }).catch(() => {});
-                }, index * (50 + Math.random() * 100)); // Rapid fire with 50-150ms intervals
-            });
-        }
-
-        // Start aggressive spamming
-        function startSpamming() {
-            spamNetwork();
-            setInterval(spamNetwork, 500 + Math.random() * 500); // Spam every 500-1000ms
-        }
-
-        // Block devtools and other shortcuts
-        function blockDevToolsAndShortcuts(event) {
-            const blockedKeys = [
-                'F12', 'Control+Shift+I', 'Control+Shift+J', 'Control+Shift+C',
-                'Control+S', 'Control+U', 'Control+P', 'Control+Shift+K'
-            ];
-
-            const isBlocked = blockedKeys.some(key => {
-                if (key.includes('+')) {
-                    const [mod1, mod2, keyName] = key.split('+');
-                    return (event.ctrlKey || event.metaKey) && 
-                           (mod2 ? event[mod2.toLowerCase() + 'Key'] && event.key.toUpperCase() === keyName : 
-                           event.key.toUpperCase() === keyName);
-                }
-                return event.key === key;
-            });
-
-            if (isBlocked) {
-                event.preventDefault();
-                event.stopPropagation();
-                console.clear();
-                console.log('%c🚫 Hành động bị chặn! DevTools không được phép.', 
-                    'color: #ef4444; font-size: 16px; font-weight: bold;');
-                spamNetwork(); // Extra spam on blocked action
-                return false;
-            }
-        }
-
-        // Comprehensive devtools detection
-        let devtoolsDetected = false;
-        function detectDevTools() {
-            const threshold = 200;
-            const isDevToolsOpen = (
-                window.outerHeight - window.innerHeight > threshold ||
-                window.outerWidth - window.innerWidth > threshold ||
-                window.console !== console ||
-                window.debugger ||
-                (window.performance && performance.memory && performance.memory.usedJSHeapSize > 50000000)
-            );
-
-            if (isDevToolsOpen && !devtoolsDetected) {
-                devtoolsDetected = true;
-                console.clear();
-                console.log('%c🚫 Phát hiện DevTools! Hành động không được phép.', 
-                    'color: #ef4444; font-size: 20px; font-weight: bold;');
-                spamNetwork(); // Aggressive spam on detection
-                // Simulate crash-like behavior
-                document.body.innerHTML = '<h1 style="color: #ef4444; text-align: center; margin-top: 50px;">🚫 Hệ thống phát hiện hành vi trái phép. Vui lòng làm mới trang.</h1>';
-                setTimeout(() => window.location.reload(), 3000);
-            } else if (!isDevToolsOpen) {
-                devtoolsDetected = false;
-            }
-        }
-
-        // Event listeners for anti-devtools
-        document.addEventListener('keydown', blockDevToolsAndShortcuts);
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            console.clear();
-            console.log('%c🚫 Right-click bị chặn!', 
-                'color: #ef4444; font-size: 16px; font-weight: bold;');
-            spamNetwork();
-            return false;
-        });
-
-        // Continuous devtools detection
-        setInterval(detectDevTools, 200); // Check every 200ms
-
         window.onTurnstileSuccess = function(token) {
             isTurnstileVerified = true;
             document.getElementById('continue-btn').disabled = false;
@@ -677,7 +580,6 @@
             document.getElementById('captcha-modal').classList.remove('show');
             document.getElementById('main-content').style.opacity = '1';
             fetchProxyCounts();
-            startSpamming(); // Start aggressive spamming after CAPTCHA
         }
 
         async function fetchWithRetry(url, retries = 3, timeout = 10000) {
@@ -692,9 +594,8 @@
                         mode: 'cors',
                         cache: 'no-cache',
                         headers: {
-                            'User-Agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36`,
-                            ...(isHttp ? { 'X-Requested-With': 'XMLHttpRequest' } : {}),
-                            'X-Random-Header': Math.random().toString(36).substring(2, 15)
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                            ...(isHttp ? { 'X-Requested-With': 'XMLHttpRequest' } : {})
                         }
                     });
                     clearTimeout(id);
@@ -809,7 +710,6 @@
             btn.disabled = true;
             btnText.textContent = 'Đang Xử Lý...';
             showStatus('loading', 'Đang Tải Proxies', 'Kết nối đến các node mạng...');
-            spamNetwork();
 
             try {
                 const endpoints = {
@@ -875,7 +775,6 @@
             reloadBtn.disabled = true;
             reloadBtnText.textContent = 'Đang Tải Lại...';
             showStatus('loading', 'Đang Tải Lại Proxies', 'Vui lòng đợi khoảng 20 giây...');
-            spamNetwork();
 
             try {
                 const headers = {
@@ -908,19 +807,10 @@
                 document.getElementById('main-content').style.opacity = '0.7';
                 document.getElementById('captcha-modal').classList.add('show');
                 document.querySelector('.cf-turnstile').setAttribute('data-sitekey', _keys.siteKey);
-                startSpamming(); // Start aggressive spamming on load
             }, 1000);
         });
 
         document.getElementById('continue-btn').addEventListener('click', handleContinue);
-
-        // Visibility change handler to spam network when tab is active
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && isTurnstileVerified) {
-                fetchProxyCounts();
-                spamNetwork();
-            }
-        });
     </script>
 </body>
 </html>
