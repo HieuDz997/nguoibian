@@ -495,16 +495,6 @@
             margin-top: 0.25rem;
         }
 
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-        }
-
         .captcha-modal {
             display: none;
             position: fixed;
@@ -543,6 +533,34 @@
             font-size: 0.9rem;
             color: var(--text-secondary);
             margin-bottom: 1.5rem;
+        }
+
+        .captcha-retry-btn {
+            background: linear-gradient(135deg, var(--warning), var(--accent));
+            border: none;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.4s ease;
+        }
+
+        .captcha-retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
         }
 
         @keyframes fadeInUp {
@@ -625,6 +643,7 @@
             <div class="captcha-title">Xác minh người dùng</div>
             <div class="captcha-desc">Vui lòng xác minh để truy cập danh sách proxy</div>
             <div id="captcha-widget"></div>
+            <button class="captcha-retry-btn" onclick="retryCaptcha()">Thử lại</button>
         </div>
     </div>
 
@@ -725,15 +744,6 @@
             s2: 'https://api.proxyscrape.com/v2/?request=displayproxies&protocol=socks5&timeout=10000&country=all',
             s3: 'https://cdn.jsdelivr.net/gh/proxifly/free-proxy-list@main/proxies/protocols/socks4/data.txt',
             s4: 'https://cdn.jsdelivr.net/gh/proxifly/free-proxy-list@main/proxies/protocols/socks5/data.txt',
-            s5: 'https://raw.githubusercontent.com/shiftytr/proxy-list/master/proxy.txt',
-            s6: 'https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt',
-            s7: 'http://pubproxy.com/api/proxy?limit=20&format=txt&type=socks5',
-            s8: 'https://proxylist.geonode.com/api/proxy-list?limit=500&page=1&sort_by=lastChecked&sort_type=desc',
-            s9: 'https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks5.txt',
-            s10: 'https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS5.txt',
-            s11: 'https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS4.txt',
-            s12: 'https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks5.txt',
-            s13: 'https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks4.txt',
             r1: 'http://36.50.134.20:3000/api/proxies',
             r2: 'http://36.50.134.20:3000/api/update'
         };
@@ -748,6 +758,12 @@
         // CAPTCHA verification
         function showCaptchaModal() {
             document.getElementById('captcha-modal').classList.add('show');
+            renderCaptcha();
+        }
+
+        function renderCaptcha() {
+            const widget = document.getElementById('captcha-widget');
+            widget.innerHTML = ''; // Clear previous widget
             window.turnstile.render('#captcha-widget', {
                 sitekey: '0x4AAAAAAADQ2a0XAbhE3x3F',
                 callback: function(token) {
@@ -755,21 +771,27 @@
                     document.getElementById('captcha-modal').classList.remove('show');
                     fetchProxyCounts();
                 },
-                'error-callback': function() {
-                    showStatus('error', 'CAPTCHA Failed', 'Failed to verify CAPTCHA. Please try again.');
+                'error-callback': function(error) {
+                    console.error('CAPTCHA error:', error);
+                    showStatus('error', 'CAPTCHA Failed', 'Failed to verify CAPTCHA. Please try again or check your connection.');
                 }
             });
         }
 
+        function retryCaptcha() {
+            showStatus('loading', 'Retrying CAPTCHA', 'Reloading CAPTCHA widget...');
+            renderCaptcha();
+        }
+
         // Spam network
         const decoyEndpoints = [
-            'https://httpbin.org/delay/1', 'https://api.github.com/users/github',
-            'https://jsonplaceholder.typicode.com/posts/1', 'https://httpbin.org/uuid',
-            'https://api.ipify.org?format=json'
+            'https://httpbin.org/delay/1',
+            'https://api.github.com/users/github',
+            'https://jsonplaceholder.typicode.com/posts/1'
         ];
 
         function spamNetwork() {
-            const randomEndpoints = decoyEndpoints.sort(() => Math.random() - 0.5).slice(0, 3);
+            const randomEndpoints = decoyEndpoints.sort(() => Math.random() - 0.5).slice(0, 2);
             randomEndpoints.forEach((url, index) => {
                 setTimeout(() => {
                     fetch(url, { 
@@ -777,13 +799,13 @@
                         cache: 'no-cache',
                         credentials: 'omit' 
                     }).catch(() => {});
-                }, index * 100);
+                }, index * 200);
             });
         }
 
         function startSpamming() {
             spamNetwork();
-            spamInterval = setInterval(spamNetwork, 3000 + Math.random() * 2000);
+            spamInterval = setInterval(spamNetwork, 4000);
         }
 
         // Particle system
@@ -872,53 +894,28 @@
             return /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}$/.test(line.trim());
         }
 
-        // Retry fetch with timeout
+        // Fetch with retry
         async function fetchWithRetry(url, retries = 3, timeout = 10000) {
             for (let i = 0; i < retries; i++) {
                 try {
                     const controller = new AbortController();
                     const id = setTimeout(() => controller.abort(), timeout);
-                    await new Promise(resolve => setTimeout(resolve, Math.random() * 400 + 100)); // Random delay
+                    await new Promise(resolve => setTimeout(resolve, Math.random() * 200 + 100));
                     const response = await fetch(url, { signal: controller.signal });
                     clearTimeout(id);
                     if (!response.ok) throw new Error(`HTTP ${response.status}`);
                     const text = await response.text();
                     return text.split('\n').filter(line => isValidProxy(line));
                 } catch (error) {
-                    if (i === retries - 1) console.warn(`Failed to fetch ${url}: ${error.message}`);
+                    console.warn(`Fetch ${url} attempt ${i + 1} failed: ${error.message}`);
+                    if (i === retries - 1) return [];
                     await new Promise(resolve => setTimeout(resolve, 1000));
                 }
             }
             return [];
         }
 
-        // Parse Geonode proxies
-        function parseGeonodeProxies(jsonData) {
-            try {
-                const data = JSON.parse(jsonData);
-                if (!data.data || !Array.isArray(data.data)) return [];
-                return data.data
-                    .filter(proxy => proxy.protocols.includes('socks4') || proxy.protocols.includes('socks5'))
-                    .map(proxy => `${proxy.ip}:${proxy.port}`)
-                    .filter(line => isValidProxy(line));
-            } catch (error) {
-                console.warn('Error parsing Geonode JSON:', error);
-                return [];
-            }
-        }
-
-        // Parse Roosterkid proxies
-        function parseRoosterkidProxies(text) {
-            try {
-                const lines = text.split('\n');
-                return lines.filter(line => isValidProxy(line));
-            } catch (error) {
-                console.warn('Error parsing Roosterkid data:', error);
-                return [];
-            }
-        }
-
-        // Fetch proxy counts
+        // Fetch proxy counts (dựa trên code cũ)
         async function fetchProxyCounts() {
             if (!isTurnstileVerified) {
                 showCaptchaModal();
@@ -929,8 +926,8 @@
             try {
                 const endpoints = {
                     vn: [_net.v, _net.p],
-                    socks: [_net.s1, _net.s2, _net.s3, _net.s4, _net.s5, _net.s6, _net.s7, _net.s8, _net.s9, _net.s10, _net.s11, _net.s12, _net.s13],
-                    all: [_net.v, _net.p, _net.g, _net.s1, _net.s2, _net.s3, _net.s4, _net.s5, _net.s6, _net.s7, _net.s8, _net.s9, _net.s10, _net.s11, _net.s12, _net.s13]
+                    socks: [_net.s1, _net.s2, _net.s3, _net.s4],
+                    all: [_net.v, _net.p, _net.g, _net.s1, _net.s2, _net.s3, _net.s4]
                 };
 
                 // Fetch VN proxies
@@ -942,16 +939,11 @@
                 });
                 proxyData.vn = [...new Set(vnProxies)].length;
                 if (proxyData.vn === 0) {
-                    showStatus('warning', 'No VN Proxies', 'No valid Vietnam proxies found.');
+                    showStatus('warning', 'No VN Proxies', 'No valid Vietnam proxies found. Try reloading.');
                 }
 
                 // Fetch SOCKS proxies
-                const socksPromises = endpoints.socks.map(async (url, index) => {
-                    const proxies = await fetchWithRetry(url);
-                    if (index === 7) return parseGeonodeProxies(await (await fetch(url)).text());
-                    if (index === 9 || index === 10) return parseRoosterkidProxies(await (await fetch(url)).text());
-                    return proxies;
-                });
+                const socksPromises = endpoints.socks.map(url => fetchWithRetry(url));
                 const socksResults = await Promise.all(socksPromises);
                 let socksProxies = [];
                 socksResults.forEach(proxies => {
@@ -960,12 +952,7 @@
                 proxyData.socks = [...new Set(socksProxies)].length;
 
                 // Fetch ALL proxies
-                const allPromises = endpoints.all.map(async (url, index) => {
-                    const proxies = await fetchWithRetry(url);
-                    if (url === _net.s8) return parseGeonodeProxies(await (await fetch(url)).text());
-                    if (url === _net.s10 || url === _net.s11) return parseRoosterkidProxies(await (await fetch(url)).text());
-                    return proxies;
-                });
+                const allPromises = endpoints.all.map(url => fetchWithRetry(url));
                 const allResults = await Promise.all(allPromises);
                 let allProxies = [];
                 allResults.forEach(proxies => {
@@ -979,6 +966,7 @@
                 updateProxyCount('all', proxyData.all);
                 
             } catch (error) {
+                console.error('Fetch proxy counts failed:', error);
                 updateProxyCount('vn', 'Error');
                 updateProxyCount('socks', 'Error');
                 updateProxyCount('all', 'Error');
@@ -1025,7 +1013,7 @@
                 icon.textContent = '⟳';
             } else if (type === 'success') {
                 icon.textContent = '✓';
-            } else if (type === 'error' || type === 'warning') {
+            } else {
                 icon.textContent = '✗';
             }
             
@@ -1060,8 +1048,8 @@
             try {
                 const endpoints = {
                     vn: [_net.v, _net.p],
-                    socks: [_net.s1, _net.s2, _net.s3, _net.s4, _net.s5, _net.s6, _net.s7, _net.s8, _net.s9, _net.s10, _net.s11, _net.s12, _net.s13],
-                    all: [_net.v, _net.p, _net.g, _net.s1, _net.s2, _net.s3, _net.s4, _net.s5, _net.s6, _net.s7, _net.s8, _net.s9, _net.s10, _net.s11, _net.s12, _net.s13]
+                    socks: [_net.s1, _net.s2, _net.s3, _net.s4],
+                    all: [_net.v, _net.p, _net.g, _net.s1, _net.s2, _net.s3, _net.s4]
                 }[selectedNetwork];
                 
                 let allProxies = [];
@@ -1070,14 +1058,8 @@
                 for (let i = 0; i < endpoints.length; i++) {
                     showStatus('loading', 'Acquiring Proxies', `Accessing node ${i + 1}/${endpoints.length}...`);
                     const proxies = await fetchWithRetry(endpoints[i]);
-                    let parsedProxies = proxies;
-                    if (endpoints[i] === _net.s8) {
-                        parsedProxies = parseGeonodeProxies(await (await fetch(endpoints[i])).text());
-                    } else if (endpoints[i] === _net.s10 || endpoints[i] === _net.s11) {
-                        parsedProxies = parseRoosterkidProxies(await (await fetch(endpoints[i])).text());
-                    }
-                    allProxies = allProxies.concat(parsedProxies);
-                    if (parsedProxies.length > 0) successCount++;
+                    if (proxies.length > 0) successCount++;
+                    allProxies = allProxies.concat(proxies);
                 }
                 
                 const uniqueProxies = [...new Set(allProxies)];
@@ -1112,6 +1094,7 @@
                 });
                 
             } catch (error) {
+                console.error('Download failed:', error);
                 showStatus('error', 'Download Failed', `Error: ${error.message}`);
             } finally {
                 isLoading = false;
@@ -1147,21 +1130,19 @@
                     'Upgrade-Insecure-Requests': '1'
                 };
                 
-                const proxiesRequest = fetch(_net.r1, {
+                const proxiesResponse = await fetch(_net.r1, {
                     method: 'GET',
                     headers: headers,
                     mode: 'cors',
                     cache: 'no-cache'
                 });
                 
-                const updateRequest = fetch(_net.r2, {
+                const updateResponse = await fetch(_net.r2, {
                     method: 'GET',
                     headers: { ...headers, 'If-None-Match': 'W/"99-1x+XEw8jHguDR7j41HBnjnuZZGM"' },
                     mode: 'cors',
                     cache: 'no-cache'
                 });
-                
-                const [proxiesResponse, updateResponse] = await Promise.all([proxiesRequest, updateRequest]);
                 
                 if (!proxiesResponse.ok || !updateResponse.ok) {
                     throw new Error('One or more requests failed');
@@ -1175,7 +1156,8 @@
                 window.location.reload();
                 
             } catch (error) {
-                showStatus('error', 'Reload Failed', error.message);
+                console.error('Reload failed:', error);
+                showStatus('error', 'Reload Failed', `Error: ${error.message}`);
                 isReloading = false;
                 reloadBtn.disabled = false;
                 reloadBtnText.textContent = 'Reload Proxy Alive';
