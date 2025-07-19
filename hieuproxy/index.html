@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proxy Nexus - Elite Network</title>
+    <!-- Thêm script Cloudflare Turnstile -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -495,64 +496,6 @@
             margin-top: 0.25rem;
         }
 
-        .captcha-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .captcha-modal.show {
-            display: flex;
-        }
-
-        .captcha-container {
-            background: var(--bg-card);
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-        }
-
-        .captcha-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        .captcha-desc {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-        }
-
-        .captcha-retry-btn {
-            background: linear-gradient(135deg, var(--warning), var(--accent));
-            border: none;
-            color: white;
-            font-size: 1rem;
-            font-weight: 600;
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            cursor: pointer;
-            margin-top: 1rem;
-            transition: all 0.4s ease;
-        }
-
-        .captcha-retry-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
-        }
-
         .particles {
             position: fixed;
             top: 0;
@@ -563,14 +506,117 @@
             z-index: -1;
         }
 
+        /* Style cho modal CAPTCHA */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.7); /* Giảm độ mờ của overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+            box-shadow: var(--shadow);
+        }
+
+        .modal-message {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-content .cf-turnstile {
+            margin: 1rem auto;
+        }
+
+        .modal-content .continue-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            min-width: 150px;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .modal-content .continue-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .modal-content .continue-btn:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .modal-content .continue-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .modal-content .continue-btn:hover::before {
+            left: 100%;
+        }
+
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes pulse {
@@ -583,6 +629,7 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
@@ -610,6 +657,10 @@
                 flex-direction: column;
                 align-items: center;
             }
+
+            .modal-message {
+                font-size: 1.3rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -626,6 +677,15 @@
                 font-size: 1rem;
                 min-width: 200px;
             }
+
+            .modal-message {
+                font-size: 1.1rem;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+                width: 95%;
+            }
         }
     </style>
 </head>
@@ -638,16 +698,16 @@
     </div>
     <canvas class="particles" id="particles"></canvas>
     
-    <div class="captcha-modal" id="captcha-modal">
-        <div class="captcha-container">
-            <div class="captcha-title">Xác minh người dùng</div>
-            <div class="captcha-desc">Vui lòng xác minh để truy cập danh sách proxy</div>
-            <div id="captcha-widget"></div>
-            <button class="captcha-retry-btn" onclick="retryCaptcha()">Thử lại</button>
+    <!-- Modal CAPTCHA -->
+    <div class="modal-overlay" id="captcha-modal">
+        <div class="modal-content">
+            <div class="modal-message">Khoan đã!... Bro có phải human không? 💀</div>
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAABlqkrhUw6a-Ljod" data-callback="onTurnstileSuccess"></div>
+            <button class="continue-btn" id="continue-btn" disabled>Continue</button>
         </div>
     </div>
-
-    <div class="container">
+    
+    <div class="container" id="main-content">
         <div class="header">
             <div class="logo">Proxy Nexus Alive VIP</div>
             <div class="tagline">Elite Network Infrastructure By Hiếu Dz</div>
@@ -735,7 +795,13 @@
     </div>
 
     <script>
-        // API endpoints
+        // Mã hóa Site Key và Secret Key
+        const _keys = {
+            siteKey: atob('MHg0QUFBQUFBQmxxa3JoVXc2YS1Mam9k'),
+            secretKey: atob('MHg0QUFBQUFBQmxxa2tIUG9mNkZrc0R1TmY4RTd5YWVERnc=')
+        };
+
+        // API endpoints được mã hóa và che giấu
         const _net = {
             v: atob('aHR0cDovLzM2LjUwLjEzNC4yMDozMDAwL2Rvd25sb2FkL3ZuLnR4dA=='),
             p: atob('aHR0cDovLzM2LjUwLjEzNC4yMDozMDAwL2Rvd25sb2FkL3Byb3h5c3BhY2Vfdm4udHh0'),
@@ -744,6 +810,15 @@
             s2: 'https://api.proxyscrape.com/v2/?request=displayproxies&protocol=socks5&timeout=10000&country=all',
             s3: 'https://cdn.jsdelivr.net/gh/proxifly/free-proxy-list@main/proxies/protocols/socks4/data.txt',
             s4: 'https://cdn.jsdelivr.net/gh/proxifly/free-proxy-list@main/proxies/protocols/socks5/data.txt',
+            s5: 'https://raw.githubusercontent.com/shiftytr/proxy-list/master/proxy.txt',
+            s6: 'https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt',
+            s7: 'http://pubproxy.com/api/proxy?limit=20&format=txt&type=socks5',
+            s8: 'https://proxylist.geonode.com/api/proxy-list?limit=500&page=1&sort_by=lastChecked&sort_type=desc',
+            s9: 'https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/socks5.txt',
+            s10: 'https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS5.txt',
+            s11: 'https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS4.txt',
+            s12: 'https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks5.txt',
+            s13: 'https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks4.txt',
             r1: 'http://36.50.134.20:3000/api/proxies',
             r2: 'http://36.50.134.20:3000/api/update'
         };
@@ -752,63 +827,87 @@
         let proxyData = { vn: 0, socks: 0, all: 0 };
         let isLoading = false;
         let isReloading = false;
-        let isTurnstileVerified = false;
         let spamInterval;
+        let isTurnstileVerified = false;
 
-        // CAPTCHA verification
-        function showCaptchaModal() {
-            document.getElementById('captcha-modal').classList.add('show');
-            renderCaptcha();
-        }
-
-        function renderCaptcha() {
-            const widget = document.getElementById('captcha-widget');
-            widget.innerHTML = ''; // Clear previous widget
-            window.turnstile.render('#captcha-widget', {
-                sitekey: '0x4AAAAAAADQ2a0XAbhE3x3F',
-                callback: function(token) {
-                    isTurnstileVerified = true;
-                    document.getElementById('captcha-modal').classList.remove('show');
-                    fetchProxyCounts();
-                },
-                'error-callback': function(error) {
-                    console.error('CAPTCHA error:', error);
-                    showStatus('error', 'CAPTCHA Failed', 'Failed to verify CAPTCHA. Please try again or check your connection.');
-                }
-            });
-        }
-
-        function retryCaptcha() {
-            showStatus('loading', 'Retrying CAPTCHA', 'Reloading CAPTCHA widget...');
-            renderCaptcha();
-        }
-
-        // Spam network
+        // Khởi tạo spam network ngay lập tức
         const decoyEndpoints = [
-            'https://httpbin.org/delay/1',
-            'https://api.github.com/users/github',
-            'https://jsonplaceholder.typicode.com/posts/1'
+            'https://httpbin.org/delay/1', 'https://api.github.com/users/github',
+            'https://jsonplaceholder.typicode.com/posts/1', 'https://httpbin.org/uuid',
+            'https://api.ipify.org?format=json', 'https://httpbin.org/status/200',
+            'https://api.github.com/zen', 'https://httpbin.org/headers',
+            'https://httpbin.org/user-agent', 'https://httpbin.org/ip',
+            'https://api.github.com/rate_limit', 'https://httpbin.org/anything',
+            'https://jsonplaceholder.typicode.com/users', 'https://httpbin.org/get',
+            'https://api.adviceslip.com/advice', 'https://httpbin.org/response-headers',
+            'https://jsonplaceholder.typicode.com/albums', 'https://httpbin.org/cookies',
+            'https://cat-fact.herokuapp.com/facts', 'https://httpbin.org/redirect/1'
         ];
 
+        // Spam network liên tục để che giấu API thật
         function spamNetwork() {
-            const randomEndpoints = decoyEndpoints.sort(() => Math.random() - 0.5).slice(0, 2);
+            const randomEndpoints = decoyEndpoints.sort(() => Math.random() - 0.5).slice(0, 5);
             randomEndpoints.forEach((url, index) => {
                 setTimeout(() => {
                     fetch(url, { 
                         mode: 'no-cors',
                         cache: 'no-cache',
-                        credentials: 'omit' 
+                        credentials: 'omit',
+                        headers: {
+                            'User-Agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36`
+                        }
                     }).catch(() => {});
-                }, index * 200);
+                }, index * (100 + Math.random() * 200));
             });
         }
 
+        // Bắt đầu spam liên tục
         function startSpamming() {
             spamNetwork();
-            spamInterval = setInterval(spamNetwork, 4000);
+            spamInterval = setInterval(spamNetwork, 2000 + Math.random() * 3000);
         }
 
-        // Particle system
+        // Hàm xử lý khi Turnstile xác thực thành công
+        window.onTurnstileSuccess = function(token) {
+            isTurnstileVerified = true;
+            // Kích hoạt nút Continue
+            document.getElementById('continue-btn').disabled = false;
+        };
+
+        // Hàm xử lý khi nhấn nút Continue
+        function handleContinue() {
+            if (!isTurnstileVerified) return;
+            // Ẩn modal và hiển thị nội dung chính
+            document.getElementById('captcha-modal').classList.remove('show');
+            document.getElementById('main-content').style.opacity = '1';
+            // Bắt đầu lấy proxy counts
+            fetchProxyCounts();
+            // Tiếp tục spam network
+            spamNetwork();
+        }
+
+        // Chặn phím mở DevTools và lưu nguồn
+        function blockDevToolsAndSave(event) {
+            if (event.key === 'F12') {
+                event.preventDefault();
+                console.log('%c🚫 F12 is disabled', 'color: #ef4444; font-size: 16px; font-weight: bold;');
+                return false;
+            }
+            if (event.ctrlKey && event.shiftKey && event.key === 'I') {
+                event.preventDefault();
+                console.log('%c🚫 Ctrl+Shift+I is disabled', 'color: #ef4444; font-size: 16px; font-weight: bold;');
+                return false;
+            }
+            if (event.ctrlKey && event.key === 'S') {
+                event.preventDefault();
+                console.log('%c🚫 Ctrl+S is disabled', 'color: #ef4444; font-size: 16px; font-weight: bold;');
+                return false;
+            }
+        }
+
+        document.addEventListener('keydown', blockDevToolsAndSave);
+
+        // Particle system nâng cao
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -862,15 +961,18 @@
 
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
             particles.forEach(particle => {
                 particle.update();
                 particle.draw();
             });
+            
             particles.forEach((particle, i) => {
                 particles.slice(i + 1).forEach(otherParticle => {
                     const dx = particle.x - otherParticle.x;
                     const dy = particle.y - otherParticle.y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
+                    
                     if (distance < 120) {
                         ctx.save();
                         ctx.globalAlpha = (1 - distance / 120) * 0.15;
@@ -884,66 +986,86 @@
                     }
                 });
             });
+            
             requestAnimationFrame(animateParticles);
         }
 
         animateParticles();
 
-        // Validate proxy format
-        function isValidProxy(line) {
-            return /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}$/.test(line.trim());
-        }
-
-        // Fetch with retry
-        async function fetchWithRetry(url, retries = 3, timeout = 10000) {
-            for (let i = 0; i < retries; i++) {
-                try {
-                    const controller = new AbortController();
-                    const id = setTimeout(() => controller.abort(), timeout);
-                    await new Promise(resolve => setTimeout(resolve, Math.random() * 200 + 100));
-                    const response = await fetch(url, { signal: controller.signal });
-                    clearTimeout(id);
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    const text = await response.text();
-                    return text.split('\n').filter(line => isValidProxy(line));
-                } catch (error) {
-                    console.warn(`Fetch ${url} attempt ${i + 1} failed: ${error.message}`);
-                    if (i === retries - 1) return [];
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                }
+        // Hàm xử lý dữ liệu JSON từ Geonode
+        function parseGeonodeProxies(jsonData) {
+            try {
+                const data = JSON.parse(jsonData);
+                if (!data.data || !Array.isArray(data.data)) return [];
+                return data.data
+                    .filter(proxy => proxy.protocols.includes('socks4') || proxy.protocols.includes('socks5'))
+                    .map(proxy => `${proxy.ip}:${proxy.port}`);
+            } catch (error) {
+                console.warn('Error parsing Geonode JSON:', error);
+                return [];
             }
-            return [];
         }
 
-        // Fetch proxy counts (dựa trên code cũ)
+        // Hàm xử lý dữ liệu từ Roosterkid
+        function parseRoosterkidProxies(text) {
+            try {
+                const lines = text.split('\n');
+                const proxyRegex = /^\S*\s*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5})/;
+                return lines
+                    .map(line => {
+                        const match = line.match(proxyRegex);
+                        return match ? match[1] : null;
+                    })
+                    .filter(line => line && line.includes(':'));
+            } catch (error) {
+                console.warn('Error parsing Roosterkid data:', error);
+                return [];
+            }
+        }
+
+        // Fetch proxy counts với spam protection mạnh
         async function fetchProxyCounts() {
-            if (!isTurnstileVerified) {
-                showCaptchaModal();
-                return;
-            }
-
+            if (!isTurnstileVerified) return;
             spamNetwork();
+            
             try {
                 const endpoints = {
                     vn: [_net.v, _net.p],
-                    socks: [_net.s1, _net.s2, _net.s3, _net.s4],
-                    all: [_net.v, _net.p, _net.g, _net.s1, _net.s2, _net.s3, _net.s4]
+                    socks: [_net.s1, _net.s2, _net.s3, _net.s4, _net.s5, _net.s6, _net.s7, _net.s8, _net.s9, _net.s10, _net.s11, _net.s12, _net.s13],
+                    all: [_net.v, _net.p, _net.g, _net.s1, _net.s2, _net.s3, _net.s4, _net.s5, _net.s6, _net.s7, _net.s8, _net.s9, _net.s10, _net.s11, _net.s12, _net.s13]
                 };
 
-                // Fetch VN proxies
-                const vnPromises = endpoints.vn.map(url => fetchWithRetry(url));
+                const vnPromises = endpoints.vn.map(url => 
+                    fetch(url).then(r => r.text()).catch(() => '')
+                );
+                
                 const vnResults = await Promise.all(vnPromises);
                 let vnProxies = [];
-                vnResults.forEach(proxies => {
-                    vnProxies = vnProxies.concat(proxies);
+                vnResults.forEach(result => {
+                    if (result) {
+                        const proxies = result.split('\n').filter(line => line.trim());
+                        vnProxies = vnProxies.concat(proxies);
+                    }
                 });
                 proxyData.vn = [...new Set(vnProxies)].length;
-                if (proxyData.vn === 0) {
-                    showStatus('warning', 'No VN Proxies', 'No valid Vietnam proxies found. Try reloading.');
-                }
 
-                // Fetch SOCKS proxies
-                const socksPromises = endpoints.socks.map(url => fetchWithRetry(url));
+                const socksPromises = endpoints.socks.map(async (url, index) => {
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) return [];
+                        const text = await response.text();
+                        if (index === 7) {
+                            return parseGeonodeProxies(text);
+                        } else if (index === 9 || index === 10) {
+                            return parseRoosterkidProxies(text);
+                        }
+                        return text.split('\n').filter(line => line.trim());
+                    } catch (error) {
+                        console.warn(`SOCKS endpoint ${index + 1} failed:`, error);
+                        return [];
+                    }
+                });
+                
                 const socksResults = await Promise.all(socksPromises);
                 let socksProxies = [];
                 socksResults.forEach(proxies => {
@@ -951,8 +1073,23 @@
                 });
                 proxyData.socks = [...new Set(socksProxies)].length;
 
-                // Fetch ALL proxies
-                const allPromises = endpoints.all.map(url => fetchWithRetry(url));
+                const allPromises = endpoints.all.map(async (url, index) => {
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) return [];
+                        const text = await response.text();
+                        if (url === _net.s8) {
+                            return parseGeonodeProxies(text);
+                        } else if (url === _net.s10 || url === _net.s11) {
+                            return parseRoosterkidProxies(text);
+                        }
+                        return text.split('\n').filter(line => line.trim());
+                    } catch (error) {
+                        console.warn(`ALL endpoint ${index + 1} failed:`, error);
+                        return [];
+                    }
+                });
+                
                 const allResults = await Promise.all(allPromises);
                 let allProxies = [];
                 allResults.forEach(proxies => {
@@ -960,17 +1097,15 @@
                 });
                 proxyData.all = [...new Set(allProxies)].length;
 
-                // Update UI
                 updateProxyCount('vn', proxyData.vn);
                 updateProxyCount('socks', proxyData.socks);
                 updateProxyCount('all', proxyData.all);
                 
             } catch (error) {
-                console.error('Fetch proxy counts failed:', error);
                 updateProxyCount('vn', 'Error');
                 updateProxyCount('socks', 'Error');
                 updateProxyCount('all', 'Error');
-                showStatus('error', 'Fetch Failed', `Failed to fetch proxy counts: ${error.message}`);
+                showStatus('error', 'Fetch Failed', 'Failed to fetch proxy counts.');
             }
         }
 
@@ -980,20 +1115,21 @@
         }
 
         function selectProxy(network) {
-            if (isLoading || isReloading || !isTurnstileVerified) {
-                if (!isTurnstileVerified) showCaptchaModal();
-                return;
-            }
+            if (isLoading || isReloading) return;
             
             selectedNetwork = network;
+            
             document.querySelectorAll('.proxy-card').forEach(card => {
                 card.classList.remove('selected');
             });
+            
             document.getElementById(`${network}-card`).classList.add('selected');
+            
             const btn = document.getElementById('download-btn');
             const btnText = document.getElementById('btn-text');
             btn.disabled = false;
             btnText.textContent = `Download ${network === 'vn' ? '🇻🇳' : network === 'socks' ? 'SOCKS' : 'Global'} Proxies`;
+            
             document.getElementById('status-panel').classList.remove('show');
         }
 
@@ -1013,7 +1149,7 @@
                 icon.textContent = '⟳';
             } else if (type === 'success') {
                 icon.textContent = '✓';
-            } else {
+            } else if (type === 'error') {
                 icon.textContent = '✗';
             }
             
@@ -1031,10 +1167,7 @@
         }
 
         async function downloadProxies() {
-            if (!selectedNetwork || isLoading || isReloading || !isTurnstileVerified) {
-                if (!isTurnstileVerified) showCaptchaModal();
-                return;
-            }
+            if (!selectedNetwork || isLoading || isReloading) return;
             
             isLoading = true;
             const btn = document.getElementById('download-btn');
@@ -1045,11 +1178,12 @@
             showStatus('loading', 'Acquiring Proxies', 'Connecting to network nodes...');
             
             spamNetwork();
+            
             try {
                 const endpoints = {
                     vn: [_net.v, _net.p],
-                    socks: [_net.s1, _net.s2, _net.s3, _net.s4],
-                    all: [_net.v, _net.p, _net.g, _net.s1, _net.s2, _net.s3, _net.s4]
+                    socks: [_net.s1, _net.s2, _net.s3, _net.s4, _net.s5, _net.s6, _net.s7, _net.s8, _net.s9, _net.s10, _net.s11, _net.s12, _net.s13],
+                    all: [_net.v, _net.p, _net.g, _net.s1, _net.s2, _net.s3, _net.s4, _net.s5, _net.s6, _net.s7, _net.s8, _net.s9, _net.s10, _net.s11, _net.s12, _net.s13]
                 }[selectedNetwork];
                 
                 let allProxies = [];
@@ -1057,16 +1191,33 @@
                 
                 for (let i = 0; i < endpoints.length; i++) {
                     showStatus('loading', 'Acquiring Proxies', `Accessing node ${i + 1}/${endpoints.length}...`);
-                    const proxies = await fetchWithRetry(endpoints[i]);
-                    if (proxies.length > 0) successCount++;
-                    allProxies = allProxies.concat(proxies);
+                    
+                    try {
+                        const response = await fetch(endpoints[i]);
+                        if (!response.ok) throw new Error('Node offline');
+                        
+                        const text = await response.text();
+                        let proxies = [];
+                        if (endpoints[i] === _net.s8) {
+                            proxies = parseGeonodeProxies(text);
+                        } else if (endpoints[i] === _net.s10 || endpoints[i] === _net.s11) {
+                            proxies = parseRoosterkidProxies(text);
+                        } else {
+                            proxies = text.split('\n').filter(line => line.trim());
+                        }
+                        allProxies = allProxies.concat(proxies);
+                        successCount++;
+                        
+                    } catch (error) {
+                        console.warn(`Node ${i + 1} failed:`, error);
+                    }
                 }
                 
                 const uniqueProxies = [...new Set(allProxies)];
                 const finalCount = uniqueProxies.length;
                 
                 if (finalCount === 0) {
-                    throw new Error('No valid proxies available');
+                    throw new Error('No proxies available');
                 }
                 
                 const fileContent = uniqueProxies.join('\n');
@@ -1090,12 +1241,11 @@
                     'Total': finalCount.toLocaleString(),
                     'Network': selectedNetwork.toUpperCase(),
                     'File': fileName,
-                    'Nodes': `${successCount}/${endpoints.length}`
+                    'Status': 'Ready'
                 });
                 
             } catch (error) {
-                console.error('Download failed:', error);
-                showStatus('error', 'Download Failed', `Error: ${error.message}`);
+                showStatus('error', 'Download Failed', error.message);
             } finally {
                 isLoading = false;
                 btn.disabled = false;
@@ -1106,10 +1256,7 @@
         }
 
         async function reloadProxyAlive() {
-            if (isLoading || isReloading || !isTurnstileVerified) {
-                if (!isTurnstileVerified) showCaptchaModal();
-                return;
-            }
+            if (isLoading || isReloading) return;
             
             isReloading = true;
             const reloadBtn = document.getElementById('reload-btn');
@@ -1120,9 +1267,10 @@
             showStatus('loading', 'Reloading Proxies', 'Please wait at least 20s to update proxy list...');
             
             spamNetwork();
+            
             try {
                 const headers = {
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
                     'Accept-Encoding': 'gzip, deflate',
                     'Accept-Language': 'vi,en;q=0.9,vi-VN;q=0.8,fr-FR;q=0.7,fr;q=0.6,en-US;q=0.5',
                     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
@@ -1130,19 +1278,24 @@
                     'Upgrade-Insecure-Requests': '1'
                 };
                 
-                const proxiesResponse = await fetch(_net.r1, {
+                const proxiesRequest = fetch(_net.r1, {
                     method: 'GET',
                     headers: headers,
                     mode: 'cors',
                     cache: 'no-cache'
                 });
                 
-                const updateResponse = await fetch(_net.r2, {
+                const updateRequest = fetch(_net.r2, {
                     method: 'GET',
-                    headers: { ...headers, 'If-None-Match': 'W/"99-1x+XEw8jHguDR7j41HBnjnuZZGM"' },
+                    headers: {
+                        ...headers,
+                        'If-None-Match': 'W/"99-1x+XEw8jHguDR7j41HBnjnuZZGM"'
+                    },
                     mode: 'cors',
                     cache: 'no-cache'
                 });
+                
+                const [proxiesResponse, updateResponse] = await Promise.all([proxiesRequest, updateRequest]);
                 
                 if (!proxiesResponse.ok || !updateResponse.ok) {
                     throw new Error('One or more requests failed');
@@ -1156,15 +1309,14 @@
                 window.location.reload();
                 
             } catch (error) {
-                console.error('Reload failed:', error);
-                showStatus('error', 'Reload Failed', `Error: ${error.message}`);
+                showStatus('error', 'Reload Failed', error.message);
                 isReloading = false;
                 reloadBtn.disabled = false;
                 reloadBtnText.textContent = 'Reload Proxy Alive';
             }
         }
 
-        // Anti-debugging
+        // Anti-debugging protection
         let devtools = false;
         setInterval(() => {
             if (window.outerHeight - window.innerHeight > 200 || window.outerWidth - window.innerWidth > 200) {
@@ -1182,7 +1334,13 @@
         // Initialize
         window.addEventListener('load', () => {
             startSpamming();
-            showCaptchaModal();
+            // Hiển thị nội dung chính trong 1 giây, sau đó hiện modal
+            setTimeout(() => {
+                document.getElementById('main-content').style.opacity = '0.7'; // Giảm độ mờ
+                document.getElementById('captcha-modal').classList.add('show');
+                // Cập nhật data-sitekey động
+                document.querySelector('.cf-turnstile').setAttribute('data-sitekey', _keys.siteKey);
+            }, 1000);
         });
 
         document.addEventListener('visibilitychange', () => {
@@ -1196,6 +1354,9 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
+
+        // Gắn sự kiện cho nút Continue
+        document.getElementById('continue-btn').addEventListener('click', handleContinue);
     </script>
 </body>
 </html>
