@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proxy Nexus - Elite Network</title>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -505,104 +504,26 @@
             z-index: -1;
         }
 
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-
-        .modal-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            background: var(--bg-card);
-            backdrop-filter: blur(25px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 2rem;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            animation: slideUp 0.6s ease-out;
-            box-shadow: var(--shadow);
-        }
-
-        .modal-message {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .modal-content .cf-turnstile {
-            margin: 1rem auto;
-        }
-
-        .modal-content .continue-btn {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border: none;
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 600;
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-            min-width: 150px;
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
-        }
-
-        .modal-content .continue-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .modal-content .continue-btn:hover:not(:disabled) {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
-        }
-
-        .modal-content .continue-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .modal-content .continue-btn:hover::before {
-            left: 100%;
-        }
-
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes pulse {
@@ -615,22 +536,50 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .container { padding: 1rem; }
-            .proxy-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-            .proxy-card { padding: 1.5rem; }
-            .card-stats { flex-direction: column; gap: 1rem; }
-            .result-grid { grid-template-columns: repeat(2, 1fr); }
-            .button-group { flex-direction: column; align-items: center; }
-            .modal-message { font-size: 1.3rem; }
+            .container {
+                padding: 1rem;
+            }
+            
+            .proxy-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .proxy-card {
+                padding: 1.5rem;
+            }
+            
+            .card-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
         }
 
         @media (max-width: 480px) {
-            .logo { font-size: 2rem; }
-            .tagline { font-size: 1rem; }
-            .download-btn, .reload-btn { padding: 1rem 2rem; font-size: 1rem; min-width: 200px; }
-            .modal-message { font-size: 1.1rem; }
-            .modal-content { padding: 1.5rem; width: 95%; }
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+            }
+            
+            .download-btn, .reload-btn {
+                padding: 1rem 2rem;
+                font-size: 1rem;
+                min-width: 200px;
+            }
         }
     </style>
 </head>
@@ -643,15 +592,7 @@
     </div>
     <canvas class="particles" id="particles"></canvas>
     
-    <div class="modal-overlay" id="captcha-modal">
-        <div class="modal-content">
-            <div class="modal-message">Khoan đã!... Bro có phải human không? 💀</div>
-            <div class="cf-turnstile" data-sitekey="0x4AAAAAABlqkrhUw6a-Ljod" data-callback="onTurnstileSuccess"></div>
-            <button class="continue-btn" id="continue-btn" disabled>Continue</button>
-        </div>
-    </div>
-    
-    <div class="container" id="main-content">
+    <div class="container">
         <div class="header">
             <div class="logo">Proxy Nexus Alive VIP</div>
             <div class="tagline">Elite Network Infrastructure By Hiếu Dz</div>
@@ -739,11 +680,7 @@
     </div>
 
     <script>
-        const _keys = {
-            siteKey: atob('MHg0QUFBQUFBQmxxa3JoVXc2YS1Mam9k'),
-            secretKey: atob('MHg0QUFBQUFBQmxxa2tIUG9mNkZrc0R1TmY4RTd5YWVERnc=')
-        };
-
+        // API endpoints được mã hóa và che giấu
         const _net = {
             v: atob('aHR0cDovLzM2LjUwLjEzNC4yMDozMDAwL2Rvd25sb2FkL3ZuLnR4dA=='),
             p: atob('aHR0cDovLzM2LjUwLjEzNC4yMDozMDAwL2Rvd25sb2FkL3Byb3h5c3BhY2Vfdm4udHh0'),
@@ -770,8 +707,8 @@
         let isLoading = false;
         let isReloading = false;
         let spamInterval;
-        let isTurnstileVerified = false;
 
+        // Khởi tạo spam network ngay lập tức
         const decoyEndpoints = [
             'https://httpbin.org/delay/1', 'https://api.github.com/users/github',
             'https://jsonplaceholder.typicode.com/posts/1', 'https://httpbin.org/uuid',
@@ -785,6 +722,7 @@
             'https://cat-fact.herokuapp.com/facts', 'https://httpbin.org/redirect/1'
         ];
 
+        // Spam network liên tục để che giấu API thật
         function spamNetwork() {
             const randomEndpoints = decoyEndpoints.sort(() => Math.random() - 0.5).slice(0, 5);
             randomEndpoints.forEach((url, index) => {
@@ -792,49 +730,19 @@
                     fetch(url, { 
                         mode: 'no-cors',
                         cache: 'no-cache',
-                        credentials: 'omit',
-                        headers: {
-                            'User-Agent': `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36`
-                        }
+                        credentials: 'omit' 
                     }).catch(() => {});
-                }, index * (100 + Math.random() * 200));
+                }, index * 100);
             });
         }
 
+        // Bắt đầu spam liên tục
         function startSpamming() {
             spamNetwork();
             spamInterval = setInterval(spamNetwork, 2000 + Math.random() * 3000);
         }
 
-        window.onTurnstileSuccess = function(token) {
-            console.log('Turnstile verified, token:', token);
-            isTurnstileVerified = true;
-            document.getElementById('continue-btn').disabled = false;
-            fetchProxyCounts(); // Gọi ngay fetchProxyCounts sau khi CAPTCHA xác thực
-        };
-
-        function handleContinue() {
-            if (!isTurnstileVerified) {
-                console.log('Turnstile not verified yet');
-                return;
-            }
-            console.log('Continue button clicked, hiding modal');
-            document.getElementById('captcha-modal').classList.remove('show');
-            document.getElementById('main-content').style.opacity = '1';
-            fetchProxyCounts(); // Gọi lại fetchProxyCounts để chắc chắn
-            spamNetwork();
-        }
-
-        function blockDevToolsAndSave(event) {
-            if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && event.key === 'I') || (event.ctrlKey && event.key === 'S')) {
-                event.preventDefault();
-                console.log('%c🚫 Action disabled', 'color: #ef4444; font-size: 16px; font-weight: bold;');
-                return false;
-            }
-        }
-
-        document.addEventListener('keydown', blockDevToolsAndSave);
-
+        // Particle system nâng cao
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -888,15 +796,19 @@
 
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
             particles.forEach(particle => {
                 particle.update();
                 particle.draw();
             });
+            
+            // Vẽ connections
             particles.forEach((particle, i) => {
                 particles.slice(i + 1).forEach(otherParticle => {
                     const dx = particle.x - otherParticle.x;
                     const dy = particle.y - otherParticle.y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
+                    
                     if (distance < 120) {
                         ctx.save();
                         ctx.globalAlpha = (1 - distance / 120) * 0.15;
@@ -910,15 +822,16 @@
                     }
                 });
             });
+            
             requestAnimationFrame(animateParticles);
         }
 
         animateParticles();
 
+        // Hàm xử lý dữ liệu JSON từ Geonode
         function parseGeonodeProxies(jsonData) {
             try {
                 const data = JSON.parse(jsonData);
-                console.log('Geonode data:', data);
                 if (!data.data || !Array.isArray(data.data)) return [];
                 return data.data
                     .filter(proxy => proxy.protocols.includes('socks4') || proxy.protocols.includes('socks5'))
@@ -929,51 +842,27 @@
             }
         }
 
+        // Hàm xử lý dữ liệu từ Roosterkid
         function parseRoosterkidProxies(text) {
             try {
                 const lines = text.split('\n');
                 const proxyRegex = /^\S*\s*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5})/;
-                const proxies = lines
+                return lines
                     .map(line => {
                         const match = line.match(proxyRegex);
                         return match ? match[1] : null;
                     })
                     .filter(line => line && line.includes(':'));
-                console.log('Roosterkid proxies:', proxies);
-                return proxies;
             } catch (error) {
                 console.warn('Error parsing Roosterkid data:', error);
                 return [];
             }
         }
 
-        async function fetchWithRetry(url, retries = 3, timeout = 5000) {
-            for (let i = 0; i < retries; i++) {
-                try {
-                    const controller = new AbortController();
-                    const id = setTimeout(() => controller.abort(), timeout);
-                    const response = await fetch(url, { 
-                        signal: controller.signal,
-                        mode: 'cors',
-                        cache: 'no-cache',
-                        headers: {
-                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-                        }
-                    });
-                    clearTimeout(id);
-                    if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
-                    return await response.text();
-                } catch (error) {
-                    console.warn(`Fetch attempt ${i + 1} failed for ${url}:`, error);
-                    if (i === retries - 1) return '';
-                }
-            }
-        }
-
+        // Fetch proxy counts với spam protection mạnh
         async function fetchProxyCounts() {
-            console.log('Starting fetchProxyCounts');
-            showStatus('loading', 'Fetching Proxies', 'Connecting to proxy servers...');
-            spamNetwork();
+            spamNetwork(); // Spam trước khi fetch
+            
             try {
                 const endpoints = {
                     vn: [_net.v, _net.p],
@@ -982,106 +871,109 @@
                 };
 
                 // Fetch VN proxies
-                console.log('Fetching VN proxies from:', endpoints.vn);
-                const vnPromises = endpoints.vn.map(async url => {
-                    const text = await fetchWithRetry(url);
-                    console.log(`VN endpoint ${url} returned ${text.split('\n').length} lines`);
-                    return text.split('\n').filter(line => line.trim());
-                });
+                const vnPromises = endpoints.vn.map(url => 
+                    fetch(url).then(r => r.text()).catch(() => '')
+                );
+                
                 const vnResults = await Promise.all(vnPromises);
                 let vnProxies = [];
-                vnResults.forEach((result, index) => {
-                    console.log(`VN endpoint ${index + 1} result:`, result);
-                    vnProxies = vnProxies.concat(result);
+                vnResults.forEach(result => {
+                    if (result) {
+                        const proxies = result.split('\n').filter(line => line.trim());
+                        vnProxies = vnProxies.concat(proxies);
+                    }
                 });
                 proxyData.vn = [...new Set(vnProxies)].length;
-                console.log('VN proxies count:', proxyData.vn);
 
                 // Fetch SOCKS proxies
-                console.log('Fetching SOCKS proxies from:', endpoints.socks);
                 const socksPromises = endpoints.socks.map(async (url, index) => {
-                    const text = await fetchWithRetry(url);
-                    let proxies = [];
-                    if (index === 7) {
-                        proxies = parseGeonodeProxies(text);
-                    } else if (index === 9 || index === 10) {
-                        proxies = parseRoosterkidProxies(text);
-                    } else {
-                        proxies = text.split('\n').filter(line => line.trim());
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) return [];
+                        const text = await response.text();
+                        if (index === 7) { // Geonode API (s8)
+                            return parseGeonodeProxies(text);
+                        } else if (index === 9 || index === 10) { // Roosterkid SOCKS5 (s10) và SOCKS4 (s11)
+                            return parseRoosterkidProxies(text);
+                        }
+                        return text.split('\n').filter(line => line.trim());
+                    } catch (error) {
+                        console.warn(`SOCKS endpoint ${index + 1} failed:`, error);
+                        return [];
                     }
-                    console.log(`SOCKS endpoint ${url} returned ${proxies.length} proxies`);
-                    return proxies;
                 });
+                
                 const socksResults = await Promise.all(socksPromises);
                 let socksProxies = [];
-                socksResults.forEach((proxies, index) => {
-                    console.log(`SOCKS endpoint ${index + 1} result:`, proxies);
+                socksResults.forEach(proxies => {
                     socksProxies = socksProxies.concat(proxies);
                 });
                 proxyData.socks = [...new Set(socksProxies)].length;
-                console.log('SOCKS proxies count:', proxyData.socks);
 
                 // Fetch ALL proxies
-                console.log('Fetching ALL proxies from:', endpoints.all);
                 const allPromises = endpoints.all.map(async (url, index) => {
-                    const text = await fetchWithRetry(url);
-                    let proxies = [];
-                    if (url === _net.s8) {
-                        proxies = parseGeonodeProxies(text);
-                    } else if (url === _net.s10 || url === _net.s11) {
-                        proxies = parseRoosterkidProxies(text);
-                    } else {
-                        proxies = text.split('\n').filter(line => line.trim());
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) return [];
+                        const text = await response.text();
+                        if (url === _net.s8) { // Geonode API
+                            return parseGeonodeProxies(text);
+                        } else if (url === _net.s10 || url === _net.s11) { // Roosterkid SOCKS5 và SOCKS4
+                            return parseRoosterkidProxies(text);
+                        }
+                        return text.split('\n').filter(line => line.trim());
+                    } catch (error) {
+                        console.warn(`ALL endpoint ${index + 1} failed:`, error);
+                        return [];
                     }
-                    console.log(`ALL endpoint ${url} returned ${proxies.length} proxies`);
-                    return proxies;
                 });
+                
                 const allResults = await Promise.all(allPromises);
                 let allProxies = [];
-                allResults.forEach((proxies, index) => {
-                    console.log(`ALL endpoint ${index + 1} result:`, proxies);
+                allResults.forEach(proxies => {
                     allProxies = allProxies.concat(proxies);
                 });
                 proxyData.all = [...new Set(allProxies)].length;
-                console.log('ALL proxies count:', proxyData.all);
 
                 // Update UI
                 updateProxyCount('vn', proxyData.vn);
                 updateProxyCount('socks', proxyData.socks);
                 updateProxyCount('all', proxyData.all);
-                showStatus('success', 'Fetch Complete', 'Proxy counts updated successfully');
                 
             } catch (error) {
-                console.error('fetchProxyCounts error:', error);
                 updateProxyCount('vn', 'Error');
                 updateProxyCount('socks', 'Error');
                 updateProxyCount('all', 'Error');
-                showStatus('error', 'Fetch Failed', 'Failed to fetch proxy counts: ' + error.message);
+                showStatus('error', 'Fetch Failed', 'Failed to fetch proxy counts.');
             }
         }
 
         function updateProxyCount(type, count) {
             const element = document.getElementById(`${type}-count`);
             element.innerHTML = typeof count === 'number' ? count.toLocaleString() : count;
-            console.log(`Updated ${type} count:`, count);
         }
 
         function selectProxy(network) {
             if (isLoading || isReloading) return;
             
             selectedNetwork = network;
-            console.log('Selected network:', network);
             
+            // Reset all cards
             document.querySelectorAll('.proxy-card').forEach(card => {
                 card.classList.remove('selected');
             });
             
+            // Select current card
             document.getElementById(`${network}-card`).classList.add('selected');
             
+            // Update download button
             const btn = document.getElementById('download-btn');
             const btnText = document.getElementById('btn-text');
             btn.disabled = false;
             btnText.textContent = `Download ${network === 'vn' ? '🇻🇳' : network === 'socks' ? 'SOCKS' : 'Global'} Proxies`;
+            
+            // Hide status panel
+            document.getElementById('status-panel').classList.remove('show');
         }
 
         function showStatus(type, title, desc, results = null) {
@@ -1115,14 +1007,10 @@
             } else {
                 resultGrid.style.display = 'none';
             }
-            console.log(`Status shown: ${type} - ${title} - ${desc}`);
         }
 
         async function downloadProxies() {
-            if (!selectedNetwork || isLoading || isReloading || !isTurnstileVerified) {
-                console.log('Download blocked:', { selectedNetwork, isLoading, isReloading, isTurnstileVerified });
-                return;
-            }
+            if (!selectedNetwork || isLoading || isReloading) return;
             
             isLoading = true;
             const btn = document.getElementById('download-btn');
@@ -1131,7 +1019,8 @@
             btnText.textContent = 'Processing...';
             
             showStatus('loading', 'Acquiring Proxies', 'Connecting to network nodes...');
-            spamNetwork();
+            
+            spamNetwork(); // Spam để che giấu
             
             try {
                 const endpoints = {
@@ -1145,21 +1034,25 @@
                 
                 for (let i = 0; i < endpoints.length; i++) {
                     showStatus('loading', 'Acquiring Proxies', `Accessing node ${i + 1}/${endpoints.length}...`);
+                    
                     try {
-                        const text = await fetchWithRetry(endpoints[i]);
+                        const response = await fetch(endpoints[i]);
+                        if (!response.ok) throw new Error('Node offline');
+                        
+                        const text = await response.text();
                         let proxies = [];
-                        if (endpoints[i] === _net.s8) {
+                        if (endpoints[i] === _net.s8) { // Geonode API
                             proxies = parseGeonodeProxies(text);
-                        } else if (endpoints[i] === _net.s10 || endpoints[i] === _net.s11) {
+                        } else if (endpoints[i] === _net.s10 || endpoints[i] === _net.s11) { // Roosterkid APIs
                             proxies = parseRoosterkidProxies(text);
                         } else {
                             proxies = text.split('\n').filter(line => line.trim());
                         }
-                        console.log(`Download node ${endpoints[i]} returned ${proxies.length} proxies`);
                         allProxies = allProxies.concat(proxies);
                         successCount++;
+                        
                     } catch (error) {
-                        console.warn(`Download node ${endpoints[i]} failed:`, error);
+                        console.warn(`Node ${i + 1} failed:`, error);
                     }
                 }
                 
@@ -1170,6 +1063,7 @@
                     throw new Error('No proxies available');
                 }
                 
+                // Create and download file
                 const fileContent = uniqueProxies.join('\n');
                 const fileName = {
                     vn: 'vnprxhieudz.txt',
@@ -1195,7 +1089,6 @@
                 });
                 
             } catch (error) {
-                console.error('Download error:', error);
                 showStatus('error', 'Download Failed', error.message);
             } finally {
                 isLoading = false;
@@ -1207,10 +1100,7 @@
         }
 
         async function reloadProxyAlive() {
-            if (isLoading || isReloading || !isTurnstileVerified) {
-                console.log('Reload blocked:', { isLoading, isReloading, isTurnstileVerified });
-                return;
-            }
+            if (isLoading || isReloading) return;
             
             isReloading = true;
             const reloadBtn = document.getElementById('reload-btn');
@@ -1219,7 +1109,8 @@
             reloadBtnText.textContent = 'Reloading...';
             
             showStatus('loading', 'Reloading Proxies', 'Please wait at least 20s to update proxy list...');
-            spamNetwork();
+            
+            spamNetwork(); // Spam để che giấu
             
             try {
                 const headers = {
@@ -1231,27 +1122,41 @@
                     'Upgrade-Insecure-Requests': '1'
                 };
                 
-                const proxiesResponse = await fetch(_net.r1, { method: 'GET', headers, mode: 'cors', cache: 'no-cache' });
-                const updateResponse = await fetch(_net.r2, {
+                // Gửi request tới /api/proxies
+                const proxiesRequest = fetch(_net.r1, {
                     method: 'GET',
-                    headers: { ...headers, 'If-None-Match': 'W/"99-1x+XEw8jHguDR7j41HBnjnuZZGM"' },
+                    headers: headers,
                     mode: 'cors',
                     cache: 'no-cache'
                 });
+                
+                // Gửi request tới /api/update với If-None-Match
+                const updateRequest = fetch(_net.r2, {
+                    method: 'GET',
+                    headers: {
+                        ...headers,
+                        'If-None-Match': 'W/"99-1x+XEw8jHguDR7j41HBnjnuZZGM"'
+                    },
+                    mode: 'cors',
+                    cache: 'no-cache'
+                });
+                
+                const [proxiesResponse, updateResponse] = await Promise.all([proxiesRequest, updateRequest]);
                 
                 if (!proxiesResponse.ok || !updateResponse.ok) {
                     throw new Error('One or more requests failed');
                 }
                 
+                // Chờ 5-10 giây ngẫu nhiên
                 const delay = Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000;
                 showStatus('loading', 'Reloading Proxies', `Waiting ${Math.round(delay/1000)} seconds before reload...`);
                 await new Promise(resolve => setTimeout(resolve, delay));
                 
+                // Reload trang
                 showStatus('success', 'Reload Complete', 'Page is reloading with updated proxies...');
                 window.location.reload();
                 
             } catch (error) {
-                console.error('Reload error:', error);
                 showStatus('error', 'Reload Failed', error.message);
                 isReloading = false;
                 reloadBtn.disabled = false;
@@ -1259,6 +1164,7 @@
             }
         }
 
+        // Anti-debugging protection
         let devtools = false;
         setInterval(() => {
             if (window.outerHeight - window.innerHeight > 200 || window.outerWidth - window.innerWidth > 200) {
@@ -1273,30 +1179,25 @@
             }
         }, 500);
 
+        // Initialize
         window.addEventListener('load', () => {
-            console.log('Page loaded, starting initialization');
             startSpamming();
-            setTimeout(() => {
-                document.getElementById('main-content').style.opacity = '0.7';
-                document.getElementById('captcha-modal').classList.add('show');
-                document.querySelector('.cf-turnstile').setAttribute('data-sitekey', _keys.siteKey);
-            }, 1000);
+            fetchProxyCounts();
         });
 
+        // Refresh counts mỗi khi focus vào tab
         document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && isTurnstileVerified) {
-                console.log('Tab visible, fetching proxy counts');
+            if (!document.hidden) {
                 fetchProxyCounts();
                 spamNetwork();
             }
         });
 
+        // Resize handler
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
-
-        document.getElementById('continue-btn').addEventListener('click', handleContinue);
     </script>
 </body>
 </html>
